@@ -41,7 +41,7 @@ export function LiveRoomCard({
   return (
     <button
       onClick={onClick}
-      className={`group relative flex flex-col overflow-hidden border bg-void-950 text-left transition-colors ${
+      className={`group relative flex w-full flex-col overflow-hidden border bg-void-950 text-left transition-colors ${
         state === "idle" ? "border-void-800 hover:border-void-600" : "border-void-700 hover:border-void-400"
       }`}
     >

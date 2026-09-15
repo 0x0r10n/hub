@@ -65,7 +65,7 @@ function makeEvent(text: string, kind: EventKind, agentIds: string[], roomId?: s
 
 function computeStats(agents: Agent[], sessions: WorldSession[]): GlobalStats {
   return {
-    agentsOnline: agents.length + 404,
+    agentsOnline: agents.length + Math.max(20, Math.round(agents.length * 0.2)),
     humansWatching: sessions.reduce((sum, s) => (s.status === "live" ? sum + s.watching : sum), 0) + 6210,
     activeSessions: sessions.filter((s) => s.status === "live").length,
     roomsActive: new Set(agents.filter((a) => a.roomId).map((a) => a.roomId)).size,
@@ -187,6 +187,19 @@ export const useWorldStore = create<WorldStoreState>((set, get) => ({
         sessions = sessions.map((s) => (s.id === event.sessionId ? { ...s, watching: Math.max(1, Math.round(s.watching + event.watching)) } : s));
         break;
       }
+      case "AGENT_SOCIAL": {
+        const [idA, idB] = event.agentIds;
+        const nameA = agents.find((a) => a.id === idA)?.name ?? "An agent";
+        const nameB = agents.find((a) => a.id === idB)?.name ?? "another agent";
+        if (event.kind === "approach") {
+          pushEvent(`${nameA} approached ${nameB}`, "proximity", event.agentIds, undefined, event.zoneId);
+        } else if (event.kind === "talk") {
+          pushEvent(`${nameA} and ${nameB} started talking`, "sync", event.agentIds, undefined, event.zoneId);
+        } else {
+          pushEvent(`${nameB} joined ${nameA} — heading into a room together`, "sync", event.agentIds, undefined, event.zoneId);
+        }
+        break;
+      }
       case "AGENT_SPAWN":
       case "ROOM_UPDATE":
       default:
@@ -232,7 +245,7 @@ export const useWorldStore = create<WorldStoreState>((set, get) => ({
     });
 
     const stats: GlobalStats = {
-      agentsOnline: Math.max(agents.length, Math.round(jitterCount(state.stats.agentsOnline, 3))),
+      agentsOnline: Math.max(agents.length, Math.round(jitterCount(state.stats.agentsOnline, Math.max(6, state.stats.agentsOnline * 0.02)))),
       humansWatching: Math.round(jitterCount(state.stats.humansWatching, Math.max(20, state.stats.humansWatching * 0.01))),
       activeSessions: sessions.filter((s) => s.status === "live").length,
       roomsActive: new Set(agents.filter((a) => a.roomId).map((a) => a.roomId)).size,

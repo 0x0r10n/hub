@@ -35,6 +35,15 @@ export class CameraController {
     return new Matrix(this.zoom, 0, 0, this.zoom, width / 2 - this.x * this.zoom, height / 2 - this.y * this.zoom);
   }
 
+  /** The world-space rectangle currently on screen, expanded by `marginPx` (in world units) on
+   * every side -- used for cheap distance/viewport culling of off-screen entities. */
+  visibleWorldRect(marginPx = 0): { x: number; y: number; w: number; h: number } {
+    const { width, height } = this.getViewport();
+    const halfW = width / 2 / this.zoom + marginPx;
+    const halfH = height / 2 / this.zoom + marginPx;
+    return { x: this.x - halfW, y: this.y - halfH, w: halfW * 2, h: halfH * 2 };
+  }
+
   private apply() {
     const m = this.getMatrix();
     this.world.scale.set(m.a, m.d);
