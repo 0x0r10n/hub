@@ -1,6 +1,8 @@
 import type { ZoneId } from "@/types";
 import type { RoomVisualState } from "./textures";
 
+export type SocialKind = "approach" | "talk" | "group";
+
 export type WorldStreamEvent =
   | { type: "AGENT_SPAWN"; agentId: string; zoneId: ZoneId }
   | { type: "AGENT_ENTER_ROOM"; agentId: string; roomId: string; zoneId: ZoneId }
@@ -9,7 +11,8 @@ export type WorldStreamEvent =
   | { type: "SESSION_START"; sessionId: string; roomId: string; zoneId: ZoneId; agentIds: string[]; title: string }
   | { type: "SESSION_UPDATE"; sessionId: string; watching: number }
   | { type: "SESSION_END"; sessionId: string }
-  | { type: "VIEWER_UPDATE"; sessionId: string; watching: number };
+  | { type: "VIEWER_UPDATE"; sessionId: string; watching: number }
+  | { type: "AGENT_SOCIAL"; kind: SocialKind; agentIds: string[]; zoneId: ZoneId };
 
 export type WorldStreamListener = (event: WorldStreamEvent) => void;
 

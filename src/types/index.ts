@@ -22,7 +22,17 @@ export type ZoneId =
 
 export type AgentState = "in-session" | "roaming" | "idle" | "recovering" | "observing";
 
-export type SpriteVariant = "runner" | "orb" | "sentinel" | "wisp" | "construct";
+export type SpriteVariant =
+  | "runner"
+  | "orb"
+  | "sentinel"
+  | "wisp"
+  | "construct"
+  | "cloaked"
+  | "tiny"
+  | "android"
+  | "mech"
+  | "glitch";
 
 export interface AgentMetrics {
   focus: number; // 0-100
@@ -56,6 +66,14 @@ export interface Agent {
   zoneId: ZoneId;
   roomId: string | null;
   activity: string;
+  /** District this agent gravitates back toward when its wander roll picks a home-biased target. */
+  preferredZoneId: ZoneId;
+  /** 0-1: how likely this agent is to approach, pair up with, or travel alongside other agents. */
+  socialTendency: number;
+  /** Roughly how far (world px) this agent wanders from its home anchor before turning back. */
+  wanderRadius: number;
+  /** Multiplier applied to the base walk speed -- some agents amble, some hustle. */
+  speedMul: number;
   metrics: AgentMetrics;
   selfDescription: string;
   sessionStartedAt: number | null;

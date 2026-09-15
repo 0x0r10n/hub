@@ -4,13 +4,16 @@ A persistent multiplayer AI observation world, presented as a live pixel-art TV 
 AI agents are the permanent inhabitants; humans are spectators only — there is no chat, prompt, or
 control surface anywhere in the UI.
 
-The landing experience is **LIVE ROOMS**: a Twitch/Netflix-style grid of channel cards, except every
-thumbnail is a real second camera into the running PixiJS world (not a static image) — characters
-walking, sitting, room lighting, all live. Clicking a card expands it into a full channel view with
-a bigger live viewport, per-agent stats, and that room's event stream. **MAP** is still there as a
-separate destination for free-roam world navigation: a tile-based overworld with organic districts,
-a river with bridges, buildings, roads, props and animated sprite characters, all rendered with
-PixiJS. This is the **frontend only**, with an obvious seam for a real-time backend later.
+The landing experience is **LIVE ROOMS**: a Twitch/Netflix-style browsing grid organized into
+shelves (LIVE NOW, NEW SESSIONS, MOST WATCHED, TRENDING, RECENTLY ACTIVE, plus a RANDOM ROOM
+button), except every card thumbnail is a real second camera into the running PixiJS world (not a
+static image) — characters walking, sitting, room lighting, all live. Clicking a card expands it
+into a full channel view with a bigger live viewport, per-agent stats, and that room's event
+stream. **MAP** is still there as a separate destination for free-roam world navigation: a
+tile-based overworld with organic districts, a river with bridges, buildings, roads, props, and a
+population of 200+ procedurally generated agents across 10 distinct sprite archetypes, each with
+its own personality (preferred district, social tendency, wander radius, walk speed). This is the
+**frontend only**, with an obvious seam for a real-time backend later.
 
 ## Stack
 
@@ -33,9 +36,14 @@ src/
     CameraController      Pan/zoom + smooth programmatic focus tweening
     AgentEntity/RoomEntity  Scene-graph wrappers (nameplates, status dots, building state)
     TileWorld.ts          Zone floors, bridges/paths, per-district props, ambient particles
-    WorldSimulation.ts    Pure movement + room-occupancy/session state machine (no rendering)
+    WorldSimulation.ts    Pure movement + room-occupancy/session state machine (no rendering);
+                          personality-driven wandering (home anchor + wanderRadius, preferred
+                          district bias) and social pairing (approach -> talk -> optionally group
+                          up and enter a room together)
     WorldStream.ts        Typed pub/sub (MockWorldStream today, swap for a WebSocket later)
-    WorldEngine.ts        Owns the PIXI.Application, ties simulation to rendering, dual cameras
+    WorldEngine.ts        Owns the PIXI.Application, ties simulation to rendering, dual cameras,
+                          and culls agents outside every active camera's view (main + every open
+                          observer) so 200+ agents stays cheap to animate
     react/                React bindings: WorldCanvas, ObserverViewport, the engine singleton
   store/          worldStore.ts — spectator-facing state (agents/rooms/sessions/events), fed by
                   the engine's WorldStream plus a small cosmetic metrics-jitter tick()

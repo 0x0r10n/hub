@@ -7,10 +7,10 @@ import type { FacingDir, AnimName } from "./AnimationController";
 interface Waypoint {
   x: number;
   y: number;
-  kind: "wander" | "door" | "bridge" | "zoneCenter";
+  kind: "wander" | "door" | "bridge" | "zoneCenter" | "social";
 }
 
-type Behavior = "wander" | "in-room";
+type Behavior = "wander" | "in-room" | "social";
 
 interface SimAgent {
   id: string;
@@ -27,6 +27,15 @@ interface SimAgent {
   thinkAt: number;
   slotIndex: number;
   pendingRoomId: string | null;
+  forceEnter: boolean;
+  homeX: number;
+  homeY: number;
+  wanderRadius: number;
+  preferredZoneId: ZoneId;
+  socialTendency: number;
+  partnerId: string | null;
+  socialUntil: number;
+  groupRoomId: string | null;
 }
 
 interface RoomRuntime {
@@ -49,6 +58,12 @@ export interface AgentView {
 
 function pick<T>(arr: T[]): T {
   return arr[Math.floor(Math.random() * arr.length)];
+}
+
+function faceToward(ax: number, ay: number, bx: number, by: number): FacingDir {
+  const dx = bx - ax;
+  const dy = by - ay;
+  return Math.abs(dx) > Math.abs(dy) ? (dx > 0 ? "right" : "left") : dy > 0 ? "down" : "up";
 }
 
 const LOOK_DIRECTIONS: FacingDir[] = ["down", "up", "left", "right"];
@@ -88,7 +103,7 @@ export class WorldSimulation {
         y: start.y,
         zoneId: agent.zoneId,
         roomId: null,
-        speed: 42 + (agent.spriteSeed % 5) * 6,
+        speed: (42 + (agent.spriteSeed % 5) * 6) * (agent.speedMul || 1),
         facing: "down",
         animName: "idle",
         behavior: "wander",
@@ -97,6 +112,15 @@ export class WorldSimulation {
         thinkAt: this.clock + Math.random() * 4000,
         slotIndex: 0,
         pendingRoomId: null,
+        forceEnter: false,
+        homeX: start.x,
+        homeY: start.y,
+        wanderRadius: agent.wanderRadius || 400,
+        preferredZoneId: agent.preferredZoneId || agent.zoneId,
+        socialTendency: agent.socialTendency ?? 0.3,
+        partnerId: null,
+        socialUntil: 0,
+        groupRoomId: null,
       };
       this.agents.set(agent.id, sim);
       if (agent.roomId && this.rooms.has(agent.roomId)) {
@@ -149,12 +173,19 @@ export class WorldSimulation {
       }
     }
 
+    if (agent.behavior === "social") {
+      if (this.clock >= agent.socialUntil) this.endSocial(agent);
+      else agent.animName = "idle";
+      return;
+    }
+
     if (agent.path.length === 0) {
       if (this.clock < agent.thinkAt) {
         agent.animName = "idle";
         if (Math.random() < deltaMs * 0.0006) agent.facing = pick(LOOK_DIRECTIONS);
         return;
       }
+      if (!agent.partnerId && this.tryInitiateSocial(agent)) return;
       this.chooseNextPath(agent);
       if (agent.path.length === 0) {
         agent.thinkAt = this.clock + 1500 + Math.random() * 2500;
@@ -173,7 +204,10 @@ export class WorldSimulation {
       if (target.kind === "door" && agent.path.length === 0) {
         this.tryEnterRoomNear(agent);
       }
-      if (agent.path.length === 0) {
+      if (target.kind === "social" && agent.path.length === 0) {
+        this.arriveAtPartner(agent);
+      }
+      if (agent.path.length === 0 && agent.behavior === "wander") {
         agent.animName = "idle";
         agent.thinkAt = this.clock + 1200 + Math.random() * 2800;
       }
@@ -188,6 +222,20 @@ export class WorldSimulation {
     agent.facing = Math.abs(dx) > Math.abs(dy) ? (dx > 0 ? "right" : "left") : dy > 0 ? "down" : "up";
   }
 
+  /** Pulls a wander target back toward the agent's home anchor when it strays past its
+   * wanderRadius, so "stays near the machines" / "moves constantly" personalities read distinctly
+   * instead of every agent roaming the full district uniformly. */
+  private wanderPointNear(agent: SimAgent, zone: WorldZone): { x: number; y: number } {
+    const pt = randomZonePoint(zone, Math.random);
+    if (agent.wanderRadius <= 0) return pt;
+    const dx = pt.x - agent.homeX;
+    const dy = pt.y - agent.homeY;
+    const d = Math.hypot(dx, dy);
+    if (d <= agent.wanderRadius) return pt;
+    const scale = agent.wanderRadius / d;
+    return { x: agent.homeX + dx * scale, y: agent.homeY + dy * scale };
+  }
+
   private chooseNextPath(agent: SimAgent) {
     const zone = this.zoneById.get(agent.zoneId);
     if (!zone) return;
@@ -195,22 +243,30 @@ export class WorldSimulation {
     const roomsHere = this.roomsByZone.get(agent.zoneId) ?? [];
 
     if (roll < 0.5) {
-      agent.path = [{ ...randomZonePoint(zone, Math.random), kind: "wander" }];
+      agent.path = [{ ...this.wanderPointNear(agent, zone), kind: "wander" }];
     } else if (roll < 0.75 && roomsHere.length > 0) {
       const room = pick(roomsHere);
       if (room.capacity === 0 || (this.rooms.get(room.id)?.occupantIds.size ?? 0) < room.capacity) {
         agent.path = [{ ...roomDoorPx(zone, room), kind: "door" }];
         agent.pendingRoomId = room.id;
       } else {
-        agent.path = [{ ...randomZonePoint(zone, Math.random), kind: "wander" }];
+        agent.path = [{ ...this.wanderPointNear(agent, zone), kind: "wander" }];
       }
     } else {
       const neighbors = this.adjacency.get(agent.zoneId) ?? [];
       if (neighbors.length === 0) {
-        agent.path = [{ ...randomZonePoint(zone, Math.random), kind: "wander" }];
+        agent.path = [{ ...this.wanderPointNear(agent, zone), kind: "wander" }];
         return;
       }
-      const nextZoneId = pick(neighbors);
+      // Bias toward the agent's preferred district when it's reachable from here, so personality
+      // ("Ember visits multiple districts", "Nova occasionally visits Commons") shapes travel
+      // instead of every cross-zone hop being uniformly random.
+      let nextZoneId: ZoneId;
+      if (agent.preferredZoneId !== agent.zoneId && neighbors.includes(agent.preferredZoneId) && Math.random() < 0.6) {
+        nextZoneId = agent.preferredZoneId;
+      } else {
+        nextZoneId = pick(neighbors);
+      }
       const nextZone = this.zoneById.get(nextZoneId);
       if (!nextZone) return;
       const here = zoneCenterPx(zone);
@@ -221,6 +277,8 @@ export class WorldSimulation {
         { ...there, kind: "zoneCenter" },
       ];
       agent.zoneId = nextZoneId;
+      agent.homeX = there.x;
+      agent.homeY = there.y;
     }
   }
 
@@ -230,7 +288,95 @@ export class WorldSimulation {
     if (!pendingRoomId) return;
     const runtime = this.rooms.get(pendingRoomId);
     if (!runtime || runtime.occupantIds.size >= (runtime.room.capacity || Infinity)) return;
-    if (Math.random() < 0.65) this.enterRoom(agent, pendingRoomId, false);
+    if (agent.forceEnter || Math.random() < 0.65) {
+      agent.forceEnter = false;
+      this.enterRoom(agent, pendingRoomId, false);
+    }
+  }
+
+  /** Personality-driven social pairing: an idle "wander" agent occasionally approaches another
+   * idle agent in the same district, gated by the average of their socialTendency. Emits the
+   * "approach" -> "talk" -> (sometimes) "group" event chain the spectator feed narrates. */
+  private tryInitiateSocial(agent: SimAgent): boolean {
+    if (agent.socialTendency < 0.05) return false;
+    if (Math.random() > agent.socialTendency * 0.35) return false;
+
+    let partner: SimAgent | null = null;
+    for (const other of this.agents.values()) {
+      if (other.id === agent.id || other.zoneId !== agent.zoneId) continue;
+      if (other.behavior !== "wander" || other.path.length !== 0 || other.partnerId) continue;
+      if (this.clock < other.thinkAt) continue;
+      partner = other;
+      if (Math.random() < 0.5) break;
+    }
+    if (!partner) return false;
+
+    agent.partnerId = partner.id;
+    partner.partnerId = agent.id;
+    partner.thinkAt = Number.MAX_SAFE_INTEGER;
+    agent.path = [{ x: partner.x, y: partner.y, kind: "social" }];
+
+    this.stream.emit({ type: "AGENT_SOCIAL", kind: "approach", agentIds: [agent.id, partner.id], zoneId: agent.zoneId });
+    return true;
+  }
+
+  private arriveAtPartner(agent: SimAgent) {
+    const partner = agent.partnerId ? this.agents.get(agent.partnerId) : null;
+    if (!partner) {
+      agent.partnerId = null;
+      agent.thinkAt = this.clock + 400;
+      return;
+    }
+    const until = this.clock + 6000 + Math.random() * 6000;
+    agent.behavior = "social";
+    partner.behavior = "social";
+    agent.socialUntil = until;
+    partner.socialUntil = until;
+    agent.facing = faceToward(agent.x, agent.y, partner.x, partner.y);
+    partner.facing = faceToward(partner.x, partner.y, agent.x, agent.y);
+
+    const avgSocial = ((agent.socialTendency ?? 0.3) + (partner.socialTendency ?? 0.3)) / 2;
+    let groupRoomId: string | null = null;
+    if (Math.random() < avgSocial * 0.5) {
+      const roomsHere = (this.roomsByZone.get(agent.zoneId) ?? []).filter((r) => r.capacity === 0 ? false : (this.rooms.get(r.id)?.occupantIds.size ?? 0) + 2 <= r.capacity);
+      if (roomsHere.length > 0) groupRoomId = pick(roomsHere).id;
+    }
+    agent.groupRoomId = groupRoomId;
+    partner.groupRoomId = groupRoomId;
+
+    this.stream.emit({ type: "AGENT_SOCIAL", kind: "talk", agentIds: [agent.id, partner.id], zoneId: agent.zoneId });
+  }
+
+  private endSocial(agent: SimAgent) {
+    const partnerId = agent.partnerId;
+    const partner = partnerId ? this.agents.get(partnerId) : null;
+    const groupRoomId = agent.groupRoomId;
+
+    agent.behavior = "wander";
+    agent.partnerId = null;
+    agent.groupRoomId = null;
+
+    if (partner && partner.partnerId === agent.id) {
+      partner.behavior = "wander";
+      partner.partnerId = null;
+      partner.groupRoomId = null;
+
+      if (groupRoomId && this.rooms.has(groupRoomId)) {
+        const zone = this.zoneById.get(agent.zoneId);
+        if (zone) {
+          const room = this.rooms.get(groupRoomId)!.room;
+          this.stream.emit({ type: "AGENT_SOCIAL", kind: "group", agentIds: [agent.id, partnerId!], zoneId: agent.zoneId });
+          for (const a of [agent, partner]) {
+            a.path = [{ ...roomDoorPx(zone, room), kind: "door" }];
+            a.pendingRoomId = groupRoomId;
+            a.forceEnter = true;
+          }
+          return;
+        }
+      }
+      partner.thinkAt = this.clock + 200 + Math.random() * 600;
+    }
+    agent.thinkAt = this.clock + 200 + Math.random() * 600;
   }
 
   private enterRoom(agent: SimAgent, roomId: string, silent: boolean) {

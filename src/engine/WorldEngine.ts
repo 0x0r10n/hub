@@ -193,10 +193,24 @@ export class WorldEngine {
     const deltaMs = this.app.ticker.deltaMS;
     this.simulation.step(deltaMs);
 
+    // Distance/viewport culling: with 200+ agents on the field, only the ones near a camera that's
+    // actually rendering right now need their animation frames and z-order kept up to date. Every
+    // live room card is its own second camera onto this same world, so culling against only the
+    // primary camera would make agents inside a room card's view vanish if the free-roam map
+    // camera happened to be parked somewhere else -- the visible set here is the union of the
+    // primary camera and every open observer viewport.
+    const cullMargin = 220;
+    const visibleRects = [this.camera?.visibleWorldRect(cullMargin)];
+    for (const ov of this.observers) visibleRects.push(ov.camera.visibleWorldRect(cullMargin));
+    const rects = visibleRects.filter((r): r is NonNullable<typeof r> => Boolean(r));
+
     for (const [id, entity] of this.agentEntities) {
       const view = this.simulation.getAgentView(id);
       if (!view) continue;
       entity.setPosition(view.x, view.y);
+      const inView = rects.length === 0 || rects.some((r) => view.x >= r.x && view.x <= r.x + r.w && view.y >= r.y && view.y <= r.y + r.h);
+      entity.view.visible = inView;
+      if (!inView) continue;
       entity.setAnimation(view.facing, view.animName);
       entity.view.zIndex = view.y;
     }

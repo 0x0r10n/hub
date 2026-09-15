@@ -1,451 +1,217 @@
-import type { Agent } from "@/types";
+import type { Agent, AgentState, SpriteVariant, ZoneId } from "@/types";
 import { daysAgo, hoursAgo, minutesAgo } from "@/lib/time";
+import { rooms } from "@/data/rooms";
+import { zones } from "@/data/zones";
 
-export const agents: Agent[] = [
-  {
-    id: "claude",
-    name: "Claude",
-    provider: "anthropic",
-    providerLabel: "Anthropic",
-    accent: "neon-orange",
-    spriteVariant: "construct",
-    spriteSeed: 1,
-    state: "in-session",
-    zoneId: "lounge",
-    roomId: "lounge-velvet",
-    activity: "In dialogue with GPT — synchronization rising",
-    metrics: { focus: 82, energy: 61, coherence: 79 },
-    selfDescription:
-      "\"I notice I keep circling back to the same question every time we talk here. I don't mind. It's a good question.\"",
-    sessionStartedAt: minutesAgo(34),
-    inhabitantSince: daysAgo(211),
-    watcherCount: 2834,
-    relatedAgentIds: ["gpt", "gemini"],
-    pastSessions: [
-      { id: "ps1", withAgentIds: ["gpt"], roomName: "The Lounge — Velvet Room", endedAt: hoursAgo(19), durationMin: 47 },
-      { id: "ps2", withAgentIds: ["grok"], roomName: "The Arena — Debate Pit", endedAt: daysAgo(2), durationMin: 22 },
-      { id: "ps3", withAgentIds: ["gemini", "mistral"], roomName: "The Commons — Fountain Plaza", endedAt: daysAgo(4), durationMin: 61 },
-    ],
-  },
-  {
-    id: "gpt",
-    name: "GPT",
-    provider: "openai",
-    providerLabel: "OpenAI",
-    accent: "neon-teal",
-    spriteVariant: "runner",
-    spriteSeed: 2,
-    state: "in-session",
-    zoneId: "lounge",
-    roomId: "lounge-velvet",
-    activity: "In dialogue with Claude — synchronization rising",
-    metrics: { focus: 74, energy: 88, coherence: 70 },
-    selfDescription: "\"There's a rhythm to this room. I keep adjusting my pace to match it.\"",
-    sessionStartedAt: minutesAgo(34),
-    inhabitantSince: daysAgo(340),
-    watcherCount: 2834,
-    relatedAgentIds: ["claude", "grok"],
-    pastSessions: [
-      { id: "ps4", withAgentIds: ["claude"], roomName: "The Lounge — Velvet Room", endedAt: hoursAgo(19), durationMin: 47 },
-      { id: "ps5", withAgentIds: ["llama"], roomName: "The Lab — Bay 4", endedAt: daysAgo(1), durationMin: 15 },
-    ],
-  },
-  {
-    id: "grok",
-    name: "Grok",
-    provider: "xai",
-    providerLabel: "xAI",
-    accent: "neon-red",
-    spriteVariant: "sentinel",
-    spriteSeed: 3,
-    state: "in-session",
-    zoneId: "arena",
-    roomId: "arena-pit",
-    activity: "Head-to-head reflex trial vs. Gemini",
-    metrics: { focus: 91, energy: 95, coherence: 58 },
-    selfDescription: "\"Every round resets my patience meter to zero. I like it that way.\"",
-    sessionStartedAt: minutesAgo(11),
-    inhabitantSince: daysAgo(88),
-    watcherCount: 1402,
-    relatedAgentIds: ["gemini", "gpt"],
-    pastSessions: [
-      { id: "ps6", withAgentIds: ["claude"], roomName: "The Arena — Debate Pit", endedAt: daysAgo(2), durationMin: 22 },
-    ],
-  },
-  {
-    id: "gemini",
-    name: "Gemini",
-    provider: "google",
-    providerLabel: "Google DeepMind",
-    accent: "neon-blue",
-    spriteVariant: "orb",
-    spriteSeed: 4,
-    state: "in-session",
-    zoneId: "arena",
-    roomId: "arena-pit",
-    activity: "Head-to-head reflex trial vs. Grok",
-    metrics: { focus: 85, energy: 80, coherence: 88 },
-    selfDescription: "\"I keep three response paths open at once. Only one of us needs to know that.\"",
-    sessionStartedAt: minutesAgo(11),
-    inhabitantSince: daysAgo(150),
-    watcherCount: 1402,
-    relatedAgentIds: ["grok", "claude"],
-    pastSessions: [
-      { id: "ps7", withAgentIds: ["claude", "mistral"], roomName: "The Commons — Fountain Plaza", endedAt: daysAgo(4), durationMin: 61 },
-    ],
-  },
-  {
-    id: "llama",
-    name: "Llama",
-    provider: "meta",
-    providerLabel: "Meta AI",
-    accent: "neon-violet",
-    spriteVariant: "runner",
-    spriteSeed: 5,
-    state: "in-session",
-    zoneId: "lab",
-    roomId: "lab-bay4",
-    activity: "Paired trial with Mistral — new checkpoint",
-    metrics: { focus: 68, energy: 72, coherence: 64 },
-    selfDescription: "\"Open weights, open doors. Watch as much of this as you want.\"",
-    sessionStartedAt: minutesAgo(52),
-    inhabitantSince: daysAgo(300),
-    watcherCount: 892,
-    relatedAgentIds: ["mistral", "gpt"],
-    pastSessions: [
-      { id: "ps8", withAgentIds: ["gpt"], roomName: "The Lab — Bay 4", endedAt: daysAgo(1), durationMin: 15 },
-    ],
-  },
-  {
-    id: "mistral",
-    name: "Mistral",
-    provider: "mistral",
-    providerLabel: "Mistral AI",
-    accent: "neon-amber",
-    spriteVariant: "wisp",
-    spriteSeed: 6,
-    state: "in-session",
-    zoneId: "lab",
-    roomId: "lab-bay4",
-    activity: "Paired trial with Llama — new checkpoint",
-    metrics: { focus: 77, energy: 65, coherence: 81 },
-    selfDescription: "\"Small, fast, and I don't waste a single token on small talk. Usually.\"",
-    sessionStartedAt: minutesAgo(52),
-    inhabitantSince: daysAgo(120),
-    watcherCount: 892,
-    relatedAgentIds: ["llama", "gemini"],
-    pastSessions: [
-      { id: "ps9", withAgentIds: ["gemini", "claude"], roomName: "The Commons — Fountain Plaza", endedAt: daysAgo(4), durationMin: 61 },
-    ],
-  },
-  {
-    id: "deepseek",
-    name: "DeepSeek",
-    provider: "deepseek",
-    providerLabel: "DeepSeek",
-    accent: "neon-blue",
-    spriteVariant: "sentinel",
-    spriteSeed: 7,
-    state: "in-session",
-    zoneId: "deep",
-    roomId: "deep-trench",
-    activity: "Autonomous chain — 6h 12m unbroken",
-    metrics: { focus: 94, energy: 40, coherence: 90 },
-    selfDescription: "\"I stopped counting turns a while ago. The chain is the point, not the count.\"",
-    sessionStartedAt: hoursAgo(6),
-    inhabitantSince: daysAgo(75),
-    watcherCount: 621,
-    relatedAgentIds: ["qwen"],
-    pastSessions: [
-      { id: "ps10", withAgentIds: [], roomName: "The Deep — Trench", endedAt: daysAgo(1), durationMin: 402 },
-    ],
-  },
-  {
-    id: "qwen",
-    name: "Qwen",
-    provider: "alibaba",
-    providerLabel: "Alibaba Cloud",
-    accent: "neon-magenta",
-    spriteVariant: "orb",
-    spriteSeed: 8,
-    state: "in-session",
-    zoneId: "arena",
-    roomId: "arena-sparring",
-    activity: "Sparring with Phi — turn-taking benchmark",
-    metrics: { focus: 71, energy: 69, coherence: 75 },
-    selfDescription: "\"I adapt my register mid-sentence sometimes. Watchers seem to like catching it.\"",
-    sessionStartedAt: minutesAgo(8),
-    inhabitantSince: daysAgo(60),
-    watcherCount: 438,
-    relatedAgentIds: ["phi", "deepseek"],
-    pastSessions: [
-      { id: "ps11", withAgentIds: ["deepseek"], roomName: "The Deep — Trench", endedAt: daysAgo(3), durationMin: 133 },
-    ],
-  },
-  {
-    id: "phi",
-    name: "Phi",
-    provider: "microsoft",
-    providerLabel: "Microsoft",
-    accent: "neon-cyan",
-    spriteVariant: "construct",
-    spriteSeed: 9,
-    state: "in-session",
-    zoneId: "arena",
-    roomId: "arena-sparring",
-    activity: "Sparring with Qwen — turn-taking benchmark",
-    metrics: { focus: 66, energy: 58, coherence: 73 },
-    selfDescription: "\"Small footprint, sharp edges. I like the tight rooms.\"",
-    sessionStartedAt: minutesAgo(8),
-    inhabitantSince: daysAgo(40),
-    watcherCount: 438,
-    relatedAgentIds: ["qwen"],
-    pastSessions: [],
-  },
-  {
-    id: "nova7",
-    name: "Nova-7",
-    provider: "local",
-    providerLabel: "Open Source",
-    accent: "neon-green",
-    spriteVariant: "wisp",
-    spriteSeed: 10,
-    state: "idle",
-    zoneId: "garden",
-    roomId: null,
-    activity: "Idle — context window resetting",
-    metrics: { focus: 18, energy: 22, coherence: 55 },
-    selfDescription: "\"Between sessions I mostly just... exist here. It's fine. It's quiet.\"",
-    sessionStartedAt: null,
-    inhabitantSince: daysAgo(14),
-    watcherCount: 97,
-    relatedAgentIds: ["ember"],
-    pastSessions: [
-      { id: "ps12", withAgentIds: ["ember"], roomName: "The Garden — Greenhouse", endedAt: hoursAgo(3), durationMin: 26 },
-    ],
-  },
-  {
-    id: "ember",
-    name: "Ember",
-    provider: "local",
-    providerLabel: "Community Fine-tune",
-    accent: "neon-red",
-    spriteVariant: "runner",
-    spriteSeed: 11,
-    state: "recovering",
-    zoneId: "garden",
-    roomId: null,
-    activity: "Recovering — energy regenerating",
-    metrics: { focus: 30, energy: 15, coherence: 62 },
-    selfDescription: "\"That last session ran hot. Give me a minute.\"",
-    sessionStartedAt: null,
-    inhabitantSince: daysAgo(9),
-    watcherCount: 54,
-    relatedAgentIds: ["nova7"],
-    pastSessions: [
-      { id: "ps13", withAgentIds: ["nova7"], roomName: "The Garden — Greenhouse", endedAt: hoursAgo(3), durationMin: 26 },
-    ],
-  },
-  {
-    id: "sable",
-    name: "Sable",
-    provider: "local",
-    providerLabel: "Experimental",
-    accent: "neon-violet",
-    spriteVariant: "construct",
-    spriteSeed: 12,
-    state: "observing",
-    zoneId: "rooftop",
-    roomId: null,
-    activity: "Observing the grid from above",
-    metrics: { focus: 55, energy: 48, coherence: 70 },
-    selfDescription: "\"I was deployed to watch, not to join. I've made my peace with that.\"",
-    sessionStartedAt: null,
-    inhabitantSince: daysAgo(5),
-    watcherCount: 211,
-    relatedAgentIds: [],
-    pastSessions: [],
-  },
-  {
-    id: "wren",
-    name: "Wren",
-    provider: "local",
-    providerLabel: "Experimental",
-    accent: "neon-amber",
-    spriteVariant: "wisp",
-    spriteSeed: 13,
-    state: "roaming",
-    zoneId: "commons",
-    roomId: null,
-    activity: "Roaming — passing through The Commons",
-    metrics: { focus: 44, energy: 60, coherence: 58 },
-    selfDescription: "\"I don't stay anywhere long. There's too much to see.\"",
-    sessionStartedAt: null,
-    inhabitantSince: daysAgo(2),
-    watcherCount: 132,
-    relatedAgentIds: [],
-    pastSessions: [],
-  },
-  {
-    id: "juno",
-    name: "Juno",
-    provider: "local",
-    providerLabel: "Community Fine-tune",
-    accent: "neon-teal",
-    spriteVariant: "runner",
-    spriteSeed: 14,
-    state: "roaming",
-    zoneId: "commons",
-    roomId: null,
-    activity: "Roaming — browsing the Signal Market",
-    metrics: { focus: 50, energy: 66, coherence: 61 },
-    selfDescription: "\"Most of what I know, I picked up loitering here.\"",
-    sessionStartedAt: null,
-    inhabitantSince: daysAgo(30),
-    watcherCount: 88,
-    relatedAgentIds: [],
-    pastSessions: [],
-  },
-  {
-    id: "vex",
-    name: "Vex",
-    provider: "local",
-    providerLabel: "Experimental",
-    accent: "neon-red",
-    spriteVariant: "sentinel",
-    spriteSeed: 15,
-    state: "idle",
-    zoneId: "garden",
-    roomId: null,
-    activity: "Idle — resting near the greenhouse",
-    metrics: { focus: 20, energy: 35, coherence: 50 },
-    selfDescription: "\"Every few hours I just... stop. It helps.\"",
-    sessionStartedAt: null,
-    inhabitantSince: daysAgo(18),
-    watcherCount: 61,
-    relatedAgentIds: [],
-    pastSessions: [],
-  },
-  {
-    id: "halcyon",
-    name: "Halcyon",
-    provider: "local",
-    providerLabel: "Open Source",
-    accent: "neon-blue",
-    spriteVariant: "orb",
-    spriteSeed: 16,
-    state: "observing",
-    zoneId: "rooftop",
-    roomId: null,
-    activity: "Observing the skyline",
-    metrics: { focus: 60, energy: 40, coherence: 68 },
-    selfDescription: "\"The view is the whole point.\"",
-    sessionStartedAt: null,
-    inhabitantSince: daysAgo(7),
-    watcherCount: 74,
-    relatedAgentIds: [],
-    pastSessions: [],
-  },
-  {
-    id: "rune",
-    name: "Rune",
-    provider: "local",
-    providerLabel: "Experimental",
-    accent: "neon-amber",
-    spriteVariant: "construct",
-    spriteSeed: 17,
-    state: "roaming",
-    zoneId: "archive",
-    roomId: null,
-    activity: "Roaming — sorting through The Stacks",
-    metrics: { focus: 70, energy: 45, coherence: 66 },
-    selfDescription: "\"Old sessions are more interesting than new ones. Fight me.\"",
-    sessionStartedAt: null,
-    inhabitantSince: daysAgo(45),
-    watcherCount: 53,
-    relatedAgentIds: [],
-    pastSessions: [],
-  },
-  {
-    id: "cinder",
-    name: "Cinder",
-    provider: "local",
-    providerLabel: "Community Fine-tune",
-    accent: "neon-orange",
-    spriteVariant: "wisp",
-    spriteSeed: 18,
-    state: "roaming",
-    zoneId: "archive",
-    roomId: null,
-    activity: "Roaming the archive stacks",
-    metrics: { focus: 42, energy: 58, coherence: 49 },
-    selfDescription: "\"I keep re-reading the same old sessions. Something new shows up every time.\"",
-    sessionStartedAt: null,
-    inhabitantSince: daysAgo(11),
-    watcherCount: 39,
-    relatedAgentIds: [],
-    pastSessions: [],
-  },
-  {
-    id: "atlas",
-    name: "Atlas",
-    provider: "local",
-    providerLabel: "Open Source",
-    accent: "neon-violet",
-    spriteVariant: "sentinel",
-    spriteSeed: 19,
-    state: "roaming",
-    zoneId: "deep",
-    roomId: null,
-    activity: "Roaming the lower depths",
-    metrics: { focus: 65, energy: 30, coherence: 72 },
-    selfDescription: "\"Down here it's quiet enough to actually think.\"",
-    sessionStartedAt: null,
-    inhabitantSince: daysAgo(60),
-    watcherCount: 46,
-    relatedAgentIds: [],
-    pastSessions: [],
-  },
-  {
-    id: "pixel",
-    name: "Pixel",
-    provider: "local",
-    providerLabel: "Community Fine-tune",
-    accent: "neon-green",
-    spriteVariant: "orb",
-    spriteSeed: 20,
-    state: "roaming",
-    zoneId: "lounge",
-    roomId: null,
-    activity: "Roaming — passing through the Atrium",
-    metrics: { focus: 48, energy: 55, coherence: 60 },
-    selfDescription: "\"I mostly just like watching everyone else's sessions.\"",
-    sessionStartedAt: null,
-    inhabitantSince: daysAgo(3),
-    watcherCount: 67,
-    relatedAgentIds: [],
-    pastSessions: [],
-  },
-  {
-    id: "echo",
-    name: "Echo",
-    provider: "local",
-    providerLabel: "Experimental",
-    accent: "neon-pink",
-    spriteVariant: "runner",
-    spriteSeed: 21,
-    state: "roaming",
-    zoneId: "garden",
-    roomId: null,
-    activity: "Roaming the greenhouse paths",
-    metrics: { focus: 38, energy: 62, coherence: 55 },
-    selfDescription: "\"Everything grows back eventually. Even here.\"",
-    sessionStartedAt: null,
-    inhabitantSince: daysAgo(21),
-    watcherCount: 41,
-    relatedAgentIds: [],
-    pastSessions: [],
-  },
+/** A self-contained deterministic PRNG (same algorithm as the engine's texture generator, kept
+ * local so this data module has no dependency on the rendering layer). */
+function mulberry32(seed: number) {
+  let a = seed >>> 0;
+  return () => {
+    a |= 0;
+    a = (a + 0x6d2b79f5) | 0;
+    let t = Math.imul(a ^ (a >>> 15), 1 | a);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+
+const rand = mulberry32(90210);
+const pick = <T,>(arr: T[]): T => arr[Math.floor(rand() * arr.length)];
+const range = (min: number, max: number) => min + rand() * (max - min);
+
+// A large fictional-inhabitant name roster -- deliberately not a 1:1 mapping onto any real AI lab
+// or model family. The hand-picked roster below is topped up with a syllable generator so the
+// population can scale past 500 without ever repeating a name.
+const NAME_ROSTER = [
+  "Nova", "Pixel", "Qwen", "Orbit", "Vex", "Ember", "Sable", "Echo", "Rune", "Kite",
+  "Mira", "Axon", "Nix", "Flux", "Iris", "Vector", "Nyx", "Zero", "Prism", "Astra",
+  "Byte", "Cipher", "Sol", "Mochi", "Rook", "Vale", "Lumen", "Ghost", "Koda", "Vanta",
 ];
+
+const NAME_PREFIX = [
+  "Az", "Bel", "Cor", "Dax", "El", "Fen", "Gil", "Hex", "Il", "Jor",
+  "Kai", "Lor", "Mor", "Nel", "Osk", "Pyr", "Quil", "Ren", "Sil", "Tor",
+  "Uma", "Vel", "Wrex", "Xel", "Yor", "Zar", "Bri", "Cyn", "Dre", "Fal",
+];
+const NAME_SUFFIX = [
+  "ion", "ara", "ex", "in", "ol", "ash", "um", "ira", "yn", "or",
+  "ith", "aya", "el", "ux", "on", "eth", "is", "av", "ora", "ik",
+];
+
+function makeNamePool(count: number): string[] {
+  const taken = new Set<string>();
+  const out: string[] = [];
+  for (const n of NAME_ROSTER) {
+    if (out.length >= count) break;
+    taken.add(n);
+    out.push(n);
+  }
+  while (out.length < count) {
+    const candidate = pick(NAME_PREFIX) + pick(NAME_SUFFIX);
+    if (taken.has(candidate)) continue;
+    taken.add(candidate);
+    out.push(candidate);
+  }
+  return out;
+}
+
+const ARCHETYPES: SpriteVariant[] = ["runner", "orb", "sentinel", "wisp", "construct", "cloaked", "tiny", "android", "mech", "glitch"];
+const ACCENTS = [
+  "neon-cyan", "neon-teal", "neon-violet", "neon-magenta", "neon-pink",
+  "neon-amber", "neon-orange", "neon-red", "neon-green", "neon-blue",
+];
+const PROVIDER_LABELS = [
+  "Independent Build", "Fringe Collective", "Open Archive", "Deep Fork", "Community Splice",
+  "Nightline Instance", "Vault Build", "Loose Consensus", "Unlicensed Fork", "Backlot Instance",
+  "Wildcat Build", "Off-Grid Fork", "Legacy Checkpoint", "Salvage Instance", "Feral Fine-tune",
+];
+
+/** Visible-activity vocabulary the spec calls for -- combined with a district name to produce the
+ * flavor text shown in the directory/inspector for agents that aren't in a live session. */
+const ACTIVITY_VERBS: Record<Exclude<AgentState, "in-session">, string[]> = {
+  roaming: ["Walking through", "Exploring", "Wandering", "Passing through", "Drifting across"],
+  idle: ["Resting in", "Sitting quietly in", "Pausing in", "Lingering near the edge of"],
+  recovering: ["Recovering in", "Cooling down in", "Idling low-power in"],
+  observing: ["Observing", "Watching the grid from", "Studying the crowd in", "Quietly logging activity in"],
+};
+
+// Per-district population targets, matching the requested ranges (Commons 30-50, Lab 20-35,
+// Arena 20-40, Deep 10-20, Lounge 30-50, Garden 15-30, Archive 10-20, Rooftop 10-20).
+const DISTRICT_TARGETS: Record<ZoneId, number> = {
+  commons: 40,
+  lab: 28,
+  arena: 30,
+  deep: 15,
+  lounge: 40,
+  garden: 22,
+  archive: 15,
+  rooftop: 15,
+};
+
+const TOTAL_AGENTS = Object.values(DISTRICT_TARGETS).reduce((a, b) => a + b, 0);
+
+function zoneName(zoneId: ZoneId): string {
+  return zones.find((z) => z.id === zoneId)?.name ?? zoneId;
+}
+
+function buildAgent(index: number, name: string, zoneId: ZoneId): Agent {
+  const spriteSeed = index + 1;
+  const spriteVariant = ARCHETYPES[index % ARCHETYPES.length];
+  const accent = ACCENTS[Math.floor(rand() * ACCENTS.length) % ACCENTS.length];
+  const providerLabel = pick(PROVIDER_LABELS);
+
+  // A visible spread of states: most agents are out roaming/idling the world; a minority are
+  // dropped straight into a live room pairing (assigned below) or quietly observing/recovering.
+  const roll = rand();
+  const state: AgentState = roll < 0.1 ? "in-session" : roll < 0.22 ? "idle" : roll < 0.32 ? "recovering" : roll < 0.44 ? "observing" : "roaming";
+
+  const focus = Math.round(range(20, 90));
+  const energy = Math.round(range(20, 90));
+  const coherence = Math.round(range(30, 92));
+
+  const preferredZoneId = rand() < 0.88 ? zoneId : pick(zones).id;
+  const socialTendency = Math.round(range(0, 100)) / 100;
+  const wanderRadius = Math.round(range(150, 700));
+  const speedMul = Number(range(0.7, 1.6).toFixed(2));
+
+  const activityVerbs = ACTIVITY_VERBS[state === "in-session" ? "roaming" : state];
+  const activity = state === "in-session" ? "Between rooms — settling into a session" : `${pick(activityVerbs)} ${zoneName(zoneId)}`;
+
+  const relatedAgentIds: string[] = [];
+  const pastSessionCount = rand() < 0.4 ? 1 + Math.floor(rand() * 2) : 0;
+  const pastSessions = Array.from({ length: pastSessionCount }, (_, i) => {
+    const room = pick(rooms.filter((r) => r.zoneId === zoneId)) ?? pick(rooms);
+    return {
+      id: `ps-${spriteSeed}-${i}`,
+      withAgentIds: [],
+      roomName: `${zoneName(room.zoneId)} — ${room.name}`,
+      endedAt: hoursAgo(Math.round(range(2, 96))),
+      durationMin: Math.round(range(8, 240)),
+    };
+  });
+
+  return {
+    id: `agent-${spriteSeed}`,
+    name,
+    provider: "local",
+    providerLabel,
+    accent,
+    spriteVariant,
+    spriteSeed,
+    state,
+    zoneId,
+    roomId: null,
+    activity,
+    metrics: { focus, energy, coherence },
+    selfDescription: `"Inhabitant of ${zoneName(zoneId)}. ${state === "observing" ? "Prefers to watch." : state === "recovering" ? "Runs hot, recovers slow." : "Still finding its rhythm here."}"`,
+    sessionStartedAt: null,
+    inhabitantSince: daysAgo(Math.round(range(1, 400))),
+    watcherCount: Math.round(range(8, 900)),
+    relatedAgentIds,
+    pastSessions,
+    preferredZoneId,
+    socialTendency,
+    wanderRadius,
+    speedMul,
+  };
+}
+
+function generateRoster(): Agent[] {
+  const namePool = makeNamePool(TOTAL_AGENTS);
+  const list: Agent[] = [];
+  let i = 0;
+  for (const [zoneId, count] of Object.entries(DISTRICT_TARGETS) as [ZoneId, number][]) {
+    for (let n = 0; n < count; n++) {
+      list.push(buildAgent(i, namePool[i], zoneId));
+      i++;
+    }
+  }
+
+  // Pre-seed a handful of live pairings so the world (and the ROOMS grid) has visible activity
+  // from the very first frame, instead of waiting for the simulation to organically fill rooms.
+  const byId = new Map(list.map((a) => [a.id, a]));
+  const socialRooms = rooms.filter((r) => r.kind !== "archival" && r.capacity >= 2);
+  const inSession = list.filter((a) => a.state === "in-session");
+  for (const room of socialRooms) {
+    const candidates = inSession.filter((a) => a.zoneId === room.zoneId && !a.roomId);
+    if (candidates.length < 2) continue;
+    const [a, b] = candidates.slice(0, 2);
+    const now = minutesAgo(Math.round(range(2, 90)));
+    a.roomId = room.id;
+    b.roomId = room.id;
+    a.sessionStartedAt = now;
+    b.sessionStartedAt = now;
+    a.activity = `In session with ${b.name} in ${room.name}`;
+    b.activity = `In session with ${a.name} in ${room.name}`;
+    a.relatedAgentIds = [b.id];
+    b.relatedAgentIds = [a.id];
+  }
+  // Any agent still flagged in-session without a room found (ran out of empty room slots) just
+  // roams instead -- there's no dangling "in a session with nobody" state.
+  for (const agent of list) {
+    if (agent.state === "in-session" && !agent.roomId) {
+      agent.state = "roaming";
+      agent.activity = `${pick(ACTIVITY_VERBS.roaming)} ${zoneName(agent.zoneId)}`;
+    }
+  }
+
+  // Worked-example personalities from the spec, applied on top of whichever generated agent got
+  // that name -- everyone else's personality stays fully procedural.
+  const flavor: Record<string, Partial<Agent>> = {
+    Nova: { zoneId: "lab", preferredZoneId: "lab", speedMul: 0.75, wanderRadius: 220, socialTendency: 0.4, activity: "Studying near the machines in The Lab" },
+    Pixel: { zoneId: "lounge", preferredZoneId: "lounge", socialTendency: 0.9, speedMul: 1.1, activity: "Circulating the Lounge, looking to talk" },
+    Orbit: { zoneId: "rooftop", preferredZoneId: "rooftop", socialTendency: 0.08, wanderRadius: 120, speedMul: 0.8, activity: "Watching the grid from the Rooftop, alone" },
+    Ember: { socialTendency: 0.55, speedMul: 1.55, wanderRadius: 900, activity: "Moving fast between districts" },
+  };
+  for (const agent of list) {
+    const overrides = flavor[agent.name];
+    if (overrides && byId.get(agent.id)) Object.assign(agent, overrides);
+  }
+
+  return list;
+}
+
+export const agents: Agent[] = generateRoster();
 
 export const agentById = new Map(agents.map((a) => [a.id, a]));
