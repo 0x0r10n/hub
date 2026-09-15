@@ -41,7 +41,7 @@ export function AgentCard({
         className="flex h-20 items-center justify-center rounded-sm"
         style={{ background: `radial-gradient(circle, color-mix(in oklab, var(--color-${agent.accent}) 14%, var(--color-void-900)), var(--color-void-950))` }}
       >
-        <AgentPortrait variant={agent.spriteVariant} accent={agent.accent} size={34} />
+        <AgentPortrait variant={agent.spriteVariant} accent={agent.accent} spriteSeed={agent.spriteSeed} size={34} />
       </div>
 
       <div>

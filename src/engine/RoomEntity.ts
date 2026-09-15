@@ -45,8 +45,13 @@ export class RoomEntity {
 
     this.beacon = new Graphics();
 
+    const furniture = new Sprite(furnitureTextureFor(room.kind, sprites, accentHex));
+    furniture.anchor.set(0.5, 1);
+    furniture.position.set(bounds.w * 0.72, bounds.h * 0.92);
+    furniture.scale.set(0.8);
+
     this.view.position.set(bounds.x, bounds.y);
-    this.view.addChild(this.sprite, this.label, this.viewerLabel, this.beacon);
+    this.view.addChild(this.sprite, furniture, this.label, this.viewerLabel, this.beacon);
     this.view.eventMode = "static";
     this.view.cursor = "pointer";
     this.view.on("pointertap", (e) => {
@@ -73,17 +78,42 @@ export class RoomEntity {
   }
 
   update(deltaMs: number) {
-    if (this.state !== "live") {
-      this.beacon.clear();
-      return;
-    }
     this.beaconPhase += deltaMs * 0.004;
-    const a = 0.5 + Math.sin(this.beaconPhase) * 0.5;
-    this.beacon.clear();
-    this.beacon.circle(this.bounds.w / 2, this.bounds.h * 0.08, 3).fill({ color: 0xff4d6d, alpha: a });
+    if (this.state === "live") {
+      const a = 0.5 + Math.sin(this.beaconPhase) * 0.5;
+      this.beacon.clear();
+      this.beacon.circle(this.bounds.w / 2, this.bounds.h * 0.08, 3).fill({ color: 0xff4d6d, alpha: a });
+    } else {
+      this.beacon.clear();
+    }
+
+    // Subtle window-light flicker on any occupied building -- never fully static, never garish.
+    if (this.state === "active" || this.state === "live" || this.state === "private") {
+      this.sprite.alpha = 0.94 + Math.sin(this.beaconPhase * 2.3) * 0.03 + Math.sin(this.beaconPhase * 5.1) * 0.02;
+    } else if (this.sprite.alpha !== 1) {
+      this.sprite.alpha = 1;
+    }
   }
 
   destroy() {
     this.view.destroy({ children: true });
+  }
+}
+
+function furnitureTextureFor(kind: Room["kind"], sprites: SpriteManager, accentHex: string) {
+  switch (kind) {
+    case "archival":
+      return sprites.getBookshelf(accentHex);
+    case "experimental":
+    case "autonomous":
+      return sprites.getCrystal(accentHex);
+    case "social":
+    case "private":
+    case "recovery":
+      return sprites.getBench();
+    case "competitive":
+    case "observation":
+    default:
+      return sprites.getLamp();
   }
 }

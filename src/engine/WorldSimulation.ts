@@ -51,6 +51,8 @@ function pick<T>(arr: T[]): T {
   return arr[Math.floor(Math.random() * arr.length)];
 }
 
+const LOOK_DIRECTIONS: FacingDir[] = ["down", "up", "left", "right"];
+
 /** Pure movement + occupancy simulation, decoupled from rendering. Steps every animation frame,
  * emits coarse WorldStreamEvents only when something meaningful changes (entering a room, a
  * session starting, etc.) rather than on every position update. */
@@ -150,6 +152,7 @@ export class WorldSimulation {
     if (agent.path.length === 0) {
       if (this.clock < agent.thinkAt) {
         agent.animName = "idle";
+        if (Math.random() < deltaMs * 0.0006) agent.facing = pick(LOOK_DIRECTIONS);
         return;
       }
       this.chooseNextPath(agent);

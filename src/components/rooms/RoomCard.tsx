@@ -47,7 +47,7 @@ export function RoomCard({
 
       <div className="flex min-h-6 items-center gap-1.5">
         {occupants.slice(0, 5).map((a) => (
-          <AgentPortrait key={a.id} variant={a.spriteVariant} accent={a.accent} size={16} />
+          <AgentPortrait key={a.id} variant={a.spriteVariant} accent={a.accent} spriteSeed={a.spriteSeed} size={16} />
         ))}
         {occupants.length === 0 && <span className="font-mono text-[10px] text-void-600">Empty</span>}
       </div>

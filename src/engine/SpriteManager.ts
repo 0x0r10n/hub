@@ -1,17 +1,23 @@
 import { Texture } from "pixi.js";
 import type { SpriteVariant, ZoneId } from "@/types";
 import {
+  type Accessory,
   buildCharacterSheet,
   makeBenchTexture,
   makeBookshelfTexture,
   makeBuildingTexture,
+  makeBushTexture,
   makeCrystalTexture,
-  makeFloorTile,
+  makeFenceTexture,
+  makeFlowerTexture,
   makeFountainTexture,
   makeLampTexture,
   makeMetaFloorTile,
+  makeMetaWildTerrain,
   makePathTile,
+  makeRockTexture,
   makeSkylineTexture,
+  makeStallTexture,
   makeTreeTexture,
   sheetToTextures,
   texFromCanvas,
@@ -29,33 +35,31 @@ export class SpriteManager {
   private pathCache: Texture[] | null = null;
   private buildingCache = new Map<string, Texture>();
   private propCache = new Map<string, Texture>();
+  private wildTerrain: Texture | null = null;
 
-  getCharacterSet(variant: SpriteVariant, accent: string): CharTextureSet {
-    const key = `${variant}:${accent}`;
+  getCharacterSet(variant: SpriteVariant, accent: string, accessory: Accessory = "none"): CharTextureSet {
+    const key = `${variant}:${accent}:${accessory}`;
     const existing = this.characterCache.get(key);
     if (existing) return existing;
-    const sheet = buildCharacterSheet(variant, accent);
+    const sheet = buildCharacterSheet(variant, accent, accessory);
     const set = sheetToTextures(sheet);
     this.characterCache.set(key, set);
     return set;
   }
 
-  getFloorTile(ambience: Ambience, accent: string, variant: number): Texture {
-    const key = `${ambience}:${accent}:${variant}`;
+  getMetaFloorTile(ambience: Ambience, accent: string, zoneId?: ZoneId): Texture {
+    const key = `meta:${ambience}:${accent}:${zoneId ?? ""}`;
     const existing = this.floorCache.get(key);
     if (existing) return existing;
-    const tex = texFromCanvas(makeFloorTile(ambience, accent, variant));
+    const tex = texFromCanvas(makeMetaFloorTile(ambience, accent, zoneId));
     this.floorCache.set(key, tex);
     return tex;
   }
 
-  getMetaFloorTile(ambience: Ambience, accent: string): Texture {
-    const key = `meta:${ambience}:${accent}`;
-    const existing = this.floorCache.get(key);
-    if (existing) return existing;
-    const tex = texFromCanvas(makeMetaFloorTile(ambience, accent));
-    this.floorCache.set(key, tex);
-    return tex;
+  getWildTerrain(): Texture {
+    if (this.wildTerrain) return this.wildTerrain;
+    this.wildTerrain = texFromCanvas(makeMetaWildTerrain());
+    return this.wildTerrain;
   }
 
   getPathTiles(): Texture[] {
@@ -99,6 +103,26 @@ export class SpriteManager {
 
   getSkyline(w: number, h: number, accent: string): Texture {
     return this.cachedProp(`skyline:${Math.round(w)}x${Math.round(h)}:${accent}`, () => makeSkylineTexture(w, h, accent));
+  }
+
+  getBush(seed: number): Texture {
+    return this.cachedProp(`bush:${seed}`, () => makeBushTexture(seed));
+  }
+
+  getRock(seed: number): Texture {
+    return this.cachedProp(`rock:${seed}`, () => makeRockTexture(seed));
+  }
+
+  getFlowerPatch(seed: number): Texture {
+    return this.cachedProp(`flower:${seed}`, () => makeFlowerTexture(seed));
+  }
+
+  getFence(): Texture {
+    return this.cachedProp("fence", () => makeFenceTexture());
+  }
+
+  getStall(accent: string): Texture {
+    return this.cachedProp(`stall:${accent}`, () => makeStallTexture(accent));
   }
 
   private cachedProp(key: string, make: () => HTMLCanvasElement): Texture {

@@ -27,7 +27,7 @@ export function SessionCard({
     >
       <div className="flex items-center justify-center gap-2 rounded-sm bg-void-950/60 py-2">
         {participants.slice(0, 2).map((p) => (
-          <AgentPortrait key={p.id} variant={p.spriteVariant} accent={p.accent} size={22} />
+          <AgentPortrait key={p.id} variant={p.spriteVariant} accent={p.accent} spriteSeed={p.spriteSeed} size={22} />
         ))}
         {participants.length === 0 && <span className="font-mono text-[10px] text-void-500">—</span>}
       </div>

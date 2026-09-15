@@ -32,7 +32,7 @@ export function ArchivePage() {
                 key={r.id}
                 className="flex items-center gap-3 border border-void-700 bg-void-900/50 px-3 py-2.5"
               >
-                <AgentPortrait variant={r.agent.spriteVariant} accent={r.agent.accent} size={22} />
+                <AgentPortrait variant={r.agent.spriteVariant} accent={r.agent.accent} spriteSeed={r.agent.spriteSeed} size={22} />
                 <div className="min-w-0 flex-1">
                   <div className="flex items-center gap-2">
                     <span className="truncate font-mono text-sm text-void-100">{r.agent.name}</span>

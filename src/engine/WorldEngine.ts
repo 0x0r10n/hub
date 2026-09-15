@@ -6,9 +6,11 @@ import { WORLD_HEIGHT, WORLD_WIDTH, roomBoundsPx, zoneCenterPx } from "./geometr
 import { RoomEntity } from "./RoomEntity";
 import { SpriteManager } from "./SpriteManager";
 import { TileWorld } from "./TileWorld";
-import { resolveAccentHex } from "./textures";
+import { ACCESSORY_BY_SEED, resolveAccentHex } from "./textures";
 import { WorldSimulation } from "./WorldSimulation";
 import { MockWorldStream, type WorldStream, type WorldStreamListener } from "./WorldStream";
+
+const FOLLOW_ZOOM = 1.5;
 
 export interface WorldEngineCallbacks {
   onSelectAgent: (id: string) => void;
@@ -49,6 +51,7 @@ export class WorldEngine {
   private resizeObserver: ResizeObserver | null = null;
   private observers = new Set<ObserverView>();
   private observerFrame = 0;
+  private followAgentId: string | null = null;
   private dragging = false;
   private lastPointer = { x: 0, y: 0 };
   private moved = 0;
@@ -92,7 +95,8 @@ export class WorldEngine {
       const zone = this.zoneById.get(agent.zoneId);
       if (!zone) continue;
       const accentHex = resolveAccentHex(agent.accent);
-      const set = this.sprites.getCharacterSet(agent.spriteVariant, accentHex);
+      const accessory = ACCESSORY_BY_SEED[agent.spriteSeed % ACCESSORY_BY_SEED.length];
+      const set = this.sprites.getCharacterSet(agent.spriteVariant, accentHex, accessory);
       const entity = new AgentEntity(agent, accentHex, set, (id) => this.callbacks.onSelectAgent(id));
       this.agentLayer.addChild(entity.view);
       this.agentEntities.set(agent.id, entity);
@@ -163,7 +167,10 @@ export class WorldEngine {
     const dy = e.clientY - this.lastPointer.y;
     this.lastPointer = { x: e.clientX, y: e.clientY };
     this.moved += Math.abs(dx) + Math.abs(dy);
-    if (this.moved > 3) this.camera?.pan(dx, dy);
+    if (this.moved > 3) {
+      this.followAgentId = null;
+      this.camera?.pan(dx, dy);
+    }
   };
 
   private onPointerUp = () => {
@@ -173,6 +180,7 @@ export class WorldEngine {
   private onWheel = (e: WheelEvent) => {
     e.preventDefault();
     if (!this.camera) return;
+    this.followAgentId = null;
     const rect = this.app.canvas.getBoundingClientRect();
     const factor = e.deltaY > 0 ? 0.9 : 1.1;
     this.camera.zoomAt(e.clientX - rect.left, e.clientY - rect.top, factor);
@@ -193,6 +201,11 @@ export class WorldEngine {
 
     for (const entity of this.roomEntities.values()) entity.update(deltaMs);
     this.tileWorld.update(deltaMs);
+
+    if (this.followAgentId && !this.dragging) {
+      const followed = this.simulation.getAgentView(this.followAgentId);
+      if (followed) this.camera?.focusTo(followed.x, followed.y, FOLLOW_ZOOM);
+    }
     this.camera?.update(deltaMs);
 
     this.observerFrame = (this.observerFrame + 1) % 2;
@@ -212,12 +225,13 @@ export class WorldEngine {
   }
 
   setSelectedAgent(id: string | null) {
+    this.followAgentId = id;
     for (const [agentId, entity] of this.agentEntities) entity.setSelected(agentId === id);
   }
 
   focusAgent(id: string) {
     const view = this.simulation.getAgentView(id);
-    if (view) this.camera?.focusTo(view.x, view.y, 1.5);
+    if (view) this.camera?.focusTo(view.x, view.y, FOLLOW_ZOOM);
   }
 
   focusZone(zoneId: ZoneId) {

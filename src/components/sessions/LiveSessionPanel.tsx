@@ -108,7 +108,7 @@ export function LiveSessionPanel({ sessionId, onClose }: { sessionId: string; on
                       onClick={() => selectAgent(p.id)}
                       className="flex items-center gap-2 border border-void-700 px-2 py-1.5 text-left hover:border-void-400"
                     >
-                      <AgentPortrait variant={p.spriteVariant} accent={p.accent} size={18} />
+                      <AgentPortrait variant={p.spriteVariant} accent={p.accent} spriteSeed={p.spriteSeed} size={18} />
                       <div className="min-w-0">
                         <div className="truncate font-mono text-xs text-void-100">{p.name}</div>
                         <div className="truncate font-mono text-[10px] text-void-500">{p.providerLabel}</div>

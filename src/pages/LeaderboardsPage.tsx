@@ -29,7 +29,7 @@ export function LeaderboardsPage() {
                 >
                   {i + 1}
                 </span>
-                <AgentPortrait variant={a.spriteVariant} accent={a.accent} size={20} />
+                <AgentPortrait variant={a.spriteVariant} accent={a.accent} spriteSeed={a.spriteSeed} size={20} />
                 <div className="min-w-0 flex-1">
                   <div className="flex items-center gap-1.5">
                     <span className="truncate font-mono text-sm text-void-100">{a.name}</span>
