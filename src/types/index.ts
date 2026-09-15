@@ -24,11 +24,6 @@ export type AgentState = "in-session" | "roaming" | "idle" | "recovering" | "obs
 
 export type SpriteVariant = "runner" | "orb" | "sentinel" | "wisp" | "construct";
 
-export interface Vec2 {
-  x: number; // 0-100, percent within zone bounds
-  y: number; // 0-100, percent within zone bounds
-}
-
 export interface AgentMetrics {
   focus: number; // 0-100
   energy: number; // 0-100
@@ -60,8 +55,6 @@ export interface Agent {
   state: AgentState;
   zoneId: ZoneId;
   roomId: string | null;
-  position: Vec2;
-  facing: "left" | "right";
   activity: string;
   metrics: AgentMetrics;
   selfDescription: string;

@@ -3,7 +3,9 @@ import { AnimatePresence, motion } from "framer-motion";
 import { useWorldStore } from "@/store/worldStore";
 import { PanelFrame, PanelHeader } from "@/components/ui/Panel";
 import { StatBar } from "@/components/ui/StatBar";
-import { PixelSprite } from "@/components/map/PixelSprite";
+import { AgentPortrait } from "@/components/ui/AgentPortrait";
+import { ObserverViewport } from "@/engine/react/ObserverViewport";
+import { roomCenterPx } from "@/engine/geometry";
 import { roomById } from "@/data/rooms";
 import { zoneById } from "@/data/zones";
 import { formatCount, formatDuration, formatRelative } from "@/lib/time";
@@ -62,39 +64,11 @@ export function LiveSessionPanel({ sessionId, onClose }: { sessionId: string; on
         <div className="font-display text-sm tracking-wide text-void-100">{session.title}</div>
       </div>
 
-      <div
-        className="relative mx-4 mt-3 flex h-28 items-center justify-center gap-10 overflow-hidden border border-void-700"
-        style={{ background: `radial-gradient(circle, color-mix(in oklab, var(--color-${accent}) 14%, var(--color-void-900)), var(--color-void-950))` }}
-      >
-        <div className="absolute inset-0 bg-grid opacity-20" />
-        {participants.length >= 2 && (
-          <svg className="pointer-events-none absolute inset-0 h-full w-full">
-            <line
-              x1="38%"
-              y1="55%"
-              x2="62%"
-              y2="55%"
-              stroke={`var(--color-${accent})`}
-              strokeWidth={1.5}
-              strokeDasharray="3 4"
-              className="animate-pulse-slow"
-            />
-          </svg>
-        )}
-        {participants.map((a) => (
-          <motion.button
-            key={a.id}
-            onClick={() => selectAgent(a.id)}
-            animate={{ y: [0, -4, 0] }}
-            transition={{ duration: 2.4, repeat: Infinity, ease: "easeInOut" }}
-            className="relative z-10 flex flex-col items-center gap-1"
-          >
-            <PixelSprite variant={a.spriteVariant} accent={a.accent} size={40} facing={a.facing} />
-            <span className="font-mono text-[10px] text-void-300">{a.name}</span>
-          </motion.button>
-        ))}
-        {participants.length === 0 && (
-          <span className="font-mono text-xs text-void-500">Scene unavailable</span>
+      <div className="relative mx-4 mt-3 h-32 overflow-hidden border border-void-700 bg-void-950">
+        {room && zone ? (
+          <ObserverViewport {...roomCenterPx(zone, room)} zoom={2.1} />
+        ) : (
+          <div className="flex h-full items-center justify-center font-mono text-xs text-void-500">Scene unavailable</div>
         )}
       </div>
 
@@ -134,7 +108,7 @@ export function LiveSessionPanel({ sessionId, onClose }: { sessionId: string; on
                       onClick={() => selectAgent(p.id)}
                       className="flex items-center gap-2 border border-void-700 px-2 py-1.5 text-left hover:border-void-400"
                     >
-                      <PixelSprite variant={p.spriteVariant} accent={p.accent} size={18} />
+                      <AgentPortrait variant={p.spriteVariant} accent={p.accent} size={18} />
                       <div className="min-w-0">
                         <div className="truncate font-mono text-xs text-void-100">{p.name}</div>
                         <div className="truncate font-mono text-[10px] text-void-500">{p.providerLabel}</div>

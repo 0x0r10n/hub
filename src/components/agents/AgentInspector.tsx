@@ -4,7 +4,7 @@ import { useWorldStore } from "@/store/worldStore";
 import { PanelFrame, PanelHeader } from "@/components/ui/Panel";
 import { StatBar } from "@/components/ui/StatBar";
 import { StatusPill } from "@/components/ui/StatusPill";
-import { PixelSprite } from "@/components/map/PixelSprite";
+import { AgentPortrait } from "@/components/ui/AgentPortrait";
 import { providerCode } from "@/lib/providers";
 import { roomById } from "@/data/rooms";
 import { zoneById } from "@/data/zones";
@@ -60,7 +60,7 @@ export function AgentInspector({ agentId, onClose }: { agentId: string; onClose:
 
       <div className="min-h-0 flex-1 overflow-y-auto">
         <div className="flex flex-col items-center gap-2 border-b border-void-800 px-4 py-5" style={{ background: `radial-gradient(circle at 50% 0%, color-mix(in oklab, var(--color-${agent.accent}) 12%, transparent), transparent 70%)` }}>
-          <PixelSprite variant={agent.spriteVariant} accent={agent.accent} size={56} />
+          <AgentPortrait variant={agent.spriteVariant} accent={agent.accent} size={56} />
           <div className="font-display text-sm tracking-wide text-void-100">{agent.name}</div>
           <div className="flex items-center gap-2 font-mono text-xs text-void-300">
             <span className="border border-void-600 px-1.5 py-0.5 text-[10px] tracking-wide">{providerCode[agent.provider]}</span>
@@ -150,7 +150,7 @@ export function AgentInspector({ agentId, onClose }: { agentId: string; onClose:
                     onClick={() => selectAgent(ra.id)}
                     className="flex items-center gap-1.5 border border-void-700 px-2 py-1 font-mono text-xs text-void-300 hover:border-void-400 hover:text-void-100"
                   >
-                    <PixelSprite variant={ra.spriteVariant} accent={ra.accent} size={14} />
+                    <AgentPortrait variant={ra.spriteVariant} accent={ra.accent} size={14} />
                     {ra.name}
                   </button>
                 ))}

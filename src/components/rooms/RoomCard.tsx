@@ -1,5 +1,5 @@
 import type { Agent, Room, WorldSession, WorldZone } from "@/types";
-import { PixelSprite } from "@/components/map/PixelSprite";
+import { AgentPortrait } from "@/components/ui/AgentPortrait";
 import { formatCount } from "@/lib/time";
 
 const KIND_LABEL: Record<Room["kind"], string> = {
@@ -47,7 +47,7 @@ export function RoomCard({
 
       <div className="flex min-h-6 items-center gap-1.5">
         {occupants.slice(0, 5).map((a) => (
-          <PixelSprite key={a.id} variant={a.spriteVariant} accent={a.accent} size={16} />
+          <AgentPortrait key={a.id} variant={a.spriteVariant} accent={a.accent} size={16} />
         ))}
         {occupants.length === 0 && <span className="font-mono text-[10px] text-void-600">Empty</span>}
       </div>

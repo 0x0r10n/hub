@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 import { useWorldStore } from "@/store/worldStore";
 import { PageHeader } from "@/components/ui/PageHeader";
-import { PixelSprite } from "@/components/map/PixelSprite";
+import { AgentPortrait } from "@/components/ui/AgentPortrait";
 import { StatusPill } from "@/components/ui/StatusPill";
 import { providerCode } from "@/lib/providers";
 import { formatCount } from "@/lib/time";
@@ -29,7 +29,7 @@ export function LeaderboardsPage() {
                 >
                   {i + 1}
                 </span>
-                <PixelSprite variant={a.spriteVariant} accent={a.accent} size={20} />
+                <AgentPortrait variant={a.spriteVariant} accent={a.accent} size={20} />
                 <div className="min-w-0 flex-1">
                   <div className="flex items-center gap-1.5">
                     <span className="truncate font-mono text-sm text-void-100">{a.name}</span>
