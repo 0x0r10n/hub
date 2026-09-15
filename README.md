@@ -1,43 +1,83 @@
 # GOON HUB
 
-A persistent multiplayer AI observation world. Autonomous AI agents are the permanent inhabitants; humans are spectators only — there is no chat, prompt, or control surface anywhere in the UI.
+A persistent multiplayer AI observation world, presented as a live pixel-art TV network. Autonomous
+AI agents are the permanent inhabitants; humans are spectators only — there is no chat, prompt, or
+control surface anywhere in the UI.
 
-This is the **frontend only**, built against a centralized mock data layer with an obvious seam for a real-time backend later.
+The landing experience is **LIVE ROOMS**: a Twitch/Netflix-style grid of channel cards, except every
+thumbnail is a real second camera into the running PixiJS world (not a static image) — characters
+walking, sitting, room lighting, all live. Clicking a card expands it into a full channel view with
+a bigger live viewport, per-agent stats, and that room's event stream. **MAP** is still there as a
+separate destination for free-roam world navigation: a tile-based overworld with organic districts,
+a river with bridges, buildings, roads, props and animated sprite characters, all rendered with
+PixiJS. This is the **frontend only**, with an obvious seam for a real-time backend later.
 
 ## Stack
 
-- React 19 + TypeScript
+- React 19 + TypeScript (surrounding HUD/panels)
+- PixiJS 8 (the world: tilemap, sprites, camera, particles)
 - Vite + Tailwind CSS v4
-- Framer Motion (animation)
-- Zustand (world state)
+- Framer Motion (UI panel animation)
+- Zustand (spectator-facing world state)
 
 ## Structure
 
 ```
 src/
   types/          Core data models: Agent, Room, WorldSession, WorldEvent, WorldZone
-  data/           Centralized mock data (agents.ts, rooms.ts, sessions.ts, events.ts, zones.ts)
-  store/          worldStore.ts — the single source of live world state + tick() simulation
-  hooks/          useLiveWorld — drives the simulation interval
+  data/           Seed data (agents.ts, rooms.ts, zones.ts) -- the initial population/geography
+  engine/         The PixiJS world, independent of React:
+    textures.ts          Procedural pixel-art generation (tiles, buildings, character sheets, props)
+    SpriteManager.ts      Caches every generated texture
+    AnimationController   Per-agent AnimatedSprite (idle/walk x 4 directions)
+    CameraController      Pan/zoom + smooth programmatic focus tweening
+    AgentEntity/RoomEntity  Scene-graph wrappers (nameplates, status dots, building state)
+    TileWorld.ts          Zone floors, bridges/paths, per-district props, ambient particles
+    WorldSimulation.ts    Pure movement + room-occupancy/session state machine (no rendering)
+    WorldStream.ts        Typed pub/sub (MockWorldStream today, swap for a WebSocket later)
+    WorldEngine.ts        Owns the PIXI.Application, ties simulation to rendering, dual cameras
+    react/                React bindings: WorldCanvas, ObserverViewport, the engine singleton
+  store/          worldStore.ts — spectator-facing state (agents/rooms/sessions/events), fed by
+                  the engine's WorldStream plus a small cosmetic metrics-jitter tick()
+  hooks/          useLiveWorld — boots the engine once and wires its stream into the store
   components/
     layout/       App shell, top nav, sidebar, mobile nav/status bar
-    map/          World map, zones, pixel sprites, ambient effects
+    map/          WorldMap — the chrome around the PixiJS canvas (header, reset view, hints)
     agents/       Agent directory + observation panel
-    sessions/     Live session spectator panel, now-live carousel
+    sessions/     Live session spectator panel (embeds a second live camera), now-live carousel
     events/       Live event feed
     stats/        Global stat counters
-    rooms/        Room directory cards
-    ui/           Shared primitives (panels, stat bars, search, pixel icons, etc.)
-  pages/          One component per top-level nav destination
+    rooms/        LiveRoomCard (channel-grid tile) + RoomChannelView (expanded channel view),
+                  each embedding an ObserverViewport -- a live camera, not a thumbnail image
+    ui/           Shared primitives (panels, stat bars, search, pixel icons, AgentPortrait, etc.)
+  pages/          One component per top-level nav destination (RoomsPage is the landing page)
 ```
+
+## How the world stays "live"
+
+`WorldSimulation` runs every animation frame inside `WorldEngine`'s ticker: agents wander a
+per-zone waypoint graph, walk through doors into rooms, and occasionally cross districts via the
+bridge graph. Room occupancy drives room state (idle/active/live/private) and session
+start/end, each emitted as a typed `WorldStreamEvent`. `useLiveWorld` subscribes the Zustand
+store to that same stream, so the event feed, NOW LIVE carousel, and agent/room state shown in
+the React HUD are a direct read of what the simulation is actually doing — not a separate random
+generator. Every live viewport — the Live Observation Panel, and every card in the LIVE ROOMS grid
+— is a *second camera* onto the exact same running world (rendered into an offscreen texture by the
+one shared WebGL context and blitted onto its own canvas), not a static illustration. `WorldEngine`
+round-robins a small, fixed-size batch of these observer cameras per animation frame, so a grid of a
+dozen simultaneous live cards stays cheap regardless of how many are on screen.
 
 ## Connecting a real backend later
 
-Everything reads from `useWorldStore` (Zustand). To go live:
-
-1. Replace the `tick()` interval in `worldStore.ts` with a WebSocket/SSE subscription that calls the same `set(...)` shape.
-2. Replace the static imports in `src/data/*.ts` with an initial fetch used to seed the store.
-3. No component changes should be required — they all read agents/rooms/sessions/events from the store, never from the mock data files directly (except a few directory pages that intentionally reference static seed data for full historical listings).
+1. Implement a `RealtimeWorldStream` with the same `WorldStream` interface (`subscribe`/`emit`) as
+   `MockWorldStream`, backed by a WebSocket/SSE connection, and have the server emit the same
+   `WorldStreamEvent` union (`AGENT_ENTER_ROOM`, `SESSION_START`, `VIEWER_UPDATE`, ...).
+2. Swap `WorldSimulation` out of `WorldEngine` for a thin client that just replays server state
+   into the same `AgentEntity`/`RoomEntity` update calls — the rendering layer never assumed the
+   simulation was local.
+3. Replace the static imports in `src/data/*.ts` with an initial fetch used to seed the world.
+4. No component changes should be required in the React layer — everything reads agents/rooms/
+   sessions/events from `useWorldStore`, which only knows about `WorldStreamEvent`s.
 
 ## Development
 

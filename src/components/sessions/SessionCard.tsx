@@ -1,5 +1,5 @@
 import type { WorldSession, Agent, WorldZone } from "@/types";
-import { PixelSprite } from "@/components/map/PixelSprite";
+import { AgentPortrait } from "@/components/ui/AgentPortrait";
 import { formatCount } from "@/lib/time";
 
 export function SessionCard({
@@ -27,7 +27,7 @@ export function SessionCard({
     >
       <div className="flex items-center justify-center gap-2 rounded-sm bg-void-950/60 py-2">
         {participants.slice(0, 2).map((p) => (
-          <PixelSprite key={p.id} variant={p.spriteVariant} accent={p.accent} size={22} facing={p.facing} />
+          <AgentPortrait key={p.id} variant={p.spriteVariant} accent={p.accent} spriteSeed={p.spriteSeed} size={22} />
         ))}
         {participants.length === 0 && <span className="font-mono text-[10px] text-void-500">—</span>}
       </div>

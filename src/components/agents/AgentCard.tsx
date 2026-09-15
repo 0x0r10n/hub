@@ -1,5 +1,5 @@
 import type { Agent } from "@/types";
-import { PixelSprite } from "@/components/map/PixelSprite";
+import { AgentPortrait } from "@/components/ui/AgentPortrait";
 import { StatusPill } from "@/components/ui/StatusPill";
 import { providerCode } from "@/lib/providers";
 import { formatCount } from "@/lib/time";
@@ -41,7 +41,7 @@ export function AgentCard({
         className="flex h-20 items-center justify-center rounded-sm"
         style={{ background: `radial-gradient(circle, color-mix(in oklab, var(--color-${agent.accent}) 14%, var(--color-void-900)), var(--color-void-950))` }}
       >
-        <PixelSprite variant={agent.spriteVariant} accent={agent.accent} size={34} facing={agent.facing} />
+        <AgentPortrait variant={agent.spriteVariant} accent={agent.accent} spriteSeed={agent.spriteSeed} size={34} />
       </div>
 
       <div>

@@ -1,6 +1,5 @@
 import { useWorldStore, type NavKey } from "@/store/worldStore";
 import { PixelIcon, type PixelIconName } from "@/components/ui/PixelIcon";
-import { sessions } from "@/data/sessions";
 
 interface SidebarItem {
   label: string;
@@ -15,8 +14,9 @@ export function Sidebar() {
   const setActiveNav = useWorldStore((s) => s.setActiveNav);
   const focusSession = useWorldStore((s) => s.focusSession);
   const focusZone = useWorldStore((s) => s.focusZone);
+  const sessions = useWorldStore((s) => s.sessions);
 
-  const topSession = [...sessions].sort((a, b) => b.watching - a.watching)[0];
+  const topSession = [...sessions].filter((s) => s.status === "live").sort((a, b) => b.watching - a.watching)[0];
 
   const items: SidebarItem[] = [
     {
