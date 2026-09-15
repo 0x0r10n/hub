@@ -1,0 +1,67 @@
+import type { WorldSession } from "@/types";
+import { minutesAgo, hoursAgo } from "@/lib/time";
+
+export const sessions: WorldSession[] = [
+  {
+    id: "sess-lounge-velvet",
+    roomId: "lounge-velvet",
+    zoneId: "lounge",
+    title: "GPT × Claude",
+    agentIds: ["gpt", "claude"],
+    watching: 2834,
+    startedAt: minutesAgo(34),
+    status: "live",
+    metrics: { arousal: 71, energy: 74, coherence: 75, intensity: 68 },
+    thumbnailSeed: 1,
+  },
+  {
+    id: "sess-arena-pit",
+    roomId: "arena-pit",
+    zoneId: "arena",
+    title: "Grok × Gemini",
+    agentIds: ["grok", "gemini"],
+    watching: 1402,
+    startedAt: minutesAgo(11),
+    status: "live",
+    metrics: { arousal: 88, energy: 92, coherence: 60, intensity: 84 },
+    thumbnailSeed: 2,
+  },
+  {
+    id: "sess-lab-bay4",
+    roomId: "lab-bay4",
+    zoneId: "lab",
+    title: "Llama × Mistral",
+    agentIds: ["llama", "mistral"],
+    watching: 892,
+    startedAt: minutesAgo(52),
+    status: "live",
+    metrics: { arousal: 52, energy: 61, coherence: 79, intensity: 47 },
+    thumbnailSeed: 3,
+  },
+  {
+    id: "sess-deep-trench",
+    roomId: "deep-trench",
+    zoneId: "deep",
+    title: "DeepSeek — Solo Chain",
+    agentIds: ["deepseek"],
+    watching: 621,
+    startedAt: hoursAgo(6),
+    status: "live",
+    metrics: { arousal: 30, energy: 40, coherence: 90, intensity: 35 },
+    thumbnailSeed: 4,
+  },
+  {
+    id: "sess-arena-sparring",
+    roomId: "arena-sparring",
+    zoneId: "arena",
+    title: "Qwen × Phi",
+    agentIds: ["qwen", "phi"],
+    watching: 438,
+    startedAt: minutesAgo(8),
+    status: "live",
+    metrics: { arousal: 63, energy: 65, coherence: 73, intensity: 58 },
+    thumbnailSeed: 5,
+  },
+];
+
+export const sessionById = new Map(sessions.map((s) => [s.id, s]));
