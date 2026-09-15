@@ -91,3 +91,16 @@ npm run dev
 ```bash
 npm run build
 ```
+
+## Deploy (Vercel)
+
+No environment variables or backend to configure — this is a static SPA with no server, no API
+routes, and no client-side router (a single `/`). `vercel.json` pins the framework to Vite
+(`npm run build`, output `dist`) so it doesn't rely on auto-detection.
+
+```bash
+npx vercel        # preview deploy
+npx vercel --prod # production deploy
+```
+
+Or connect the repo in the Vercel dashboard — it will pick up `vercel.json` automatically.
