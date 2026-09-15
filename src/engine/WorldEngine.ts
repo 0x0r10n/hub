@@ -11,6 +11,9 @@ import { WorldSimulation } from "./WorldSimulation";
 import { MockWorldStream, type WorldStream, type WorldStreamListener } from "./WorldStream";
 
 const FOLLOW_ZOOM = 1.5;
+/** How many observer (live room card) viewports get re-rendered per animation frame, regardless
+ * of how many are open. Keeps a grid of a dozen live thumbnails cheap. */
+const OBSERVERS_PER_TICK = 4;
 
 export interface WorldEngineCallbacks {
   onSelectAgent: (id: string) => void;
@@ -50,7 +53,7 @@ export class WorldEngine {
   private mountEl: HTMLDivElement | null = null;
   private resizeObserver: ResizeObserver | null = null;
   private observers = new Set<ObserverView>();
-  private observerFrame = 0;
+  private observerCursor = 0;
   private followAgentId: string | null = null;
   private dragging = false;
   private lastPointer = { x: 0, y: 0 };
@@ -208,17 +211,28 @@ export class WorldEngine {
     }
     this.camera?.update(deltaMs);
 
-    this.observerFrame = (this.observerFrame + 1) % 2;
-    if (this.observerFrame === 0) {
-      for (const ov of this.observers) {
-        ov.camera.update(deltaMs * 2);
-        this.app.renderer.render({ container: this.worldRoot, transform: ov.camera.getMatrix(), target: ov.renderTexture, clearColor: 0x050609 });
-        const src = this.app.renderer.extract.canvas(ov.renderTexture) as unknown as CanvasImageSource;
-        ov.ctx.clearRect(0, 0, ov.canvas.width, ov.canvas.height);
-        ov.ctx.drawImage(src, 0, 0, ov.canvas.width, ov.canvas.height);
-      }
-    }
+    this.renderObserverBatch(deltaMs);
   };
+
+  /** Renders only a small, fixed-size batch of observer viewports per animation frame, cycling
+   * round-robin through however many are open. A grid of a dozen live room cards stays cheap
+   * (bounded render+readback cost per frame) at the price of each individual card refreshing a
+   * little less often as more of them are mounted at once -- still reads as "live" at thumbnail
+   * size. */
+  private renderObserverBatch(deltaMs: number) {
+    const list = Array.from(this.observers);
+    if (list.length === 0) return;
+    const batchSize = Math.min(OBSERVERS_PER_TICK, list.length);
+    for (let i = 0; i < batchSize; i++) {
+      const ov = list[this.observerCursor % list.length];
+      this.observerCursor++;
+      ov.camera.update(deltaMs);
+      this.app.renderer.render({ container: this.worldRoot, transform: ov.camera.getMatrix(), target: ov.renderTexture, clearColor: 0x050609 });
+      const src = this.app.renderer.extract.canvas(ov.renderTexture) as unknown as CanvasImageSource;
+      ov.ctx.clearRect(0, 0, ov.canvas.width, ov.canvas.height);
+      ov.ctx.drawImage(src, 0, 0, ov.canvas.width, ov.canvas.height);
+    }
+  }
 
   setCallbacks(callbacks: WorldEngineCallbacks) {
     this.callbacks = callbacks;

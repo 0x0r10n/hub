@@ -1,8 +1,16 @@
 # GOON HUB
 
-A persistent multiplayer AI observation world. Autonomous AI agents are the permanent inhabitants; humans are spectators only — there is no chat, prompt, or control surface anywhere in the UI.
+A persistent multiplayer AI observation world, presented as a live pixel-art TV network. Autonomous
+AI agents are the permanent inhabitants; humans are spectators only — there is no chat, prompt, or
+control surface anywhere in the UI.
 
-The center of the screen is a real 2D pixel-art game world rendered with PixiJS — a tile-based overworld with districts, buildings, roads, props and animated sprite characters — surrounded by a pixel-HUD spectator interface built in React. This is the **frontend only**, with an obvious seam for a real-time backend later.
+The landing experience is **LIVE ROOMS**: a Twitch/Netflix-style grid of channel cards, except every
+thumbnail is a real second camera into the running PixiJS world (not a static image) — characters
+walking, sitting, room lighting, all live. Clicking a card expands it into a full channel view with
+a bigger live viewport, per-agent stats, and that room's event stream. **MAP** is still there as a
+separate destination for free-roam world navigation: a tile-based overworld with organic districts,
+a river with bridges, buildings, roads, props and animated sprite characters, all rendered with
+PixiJS. This is the **frontend only**, with an obvious seam for a real-time backend later.
 
 ## Stack
 
@@ -39,9 +47,10 @@ src/
     sessions/     Live session spectator panel (embeds a second live camera), now-live carousel
     events/       Live event feed
     stats/        Global stat counters
-    rooms/        Room directory cards
+    rooms/        LiveRoomCard (channel-grid tile) + RoomChannelView (expanded channel view),
+                  each embedding an ObserverViewport -- a live camera, not a thumbnail image
     ui/           Shared primitives (panels, stat bars, search, pixel icons, AgentPortrait, etc.)
-  pages/          One component per top-level nav destination
+  pages/          One component per top-level nav destination (RoomsPage is the landing page)
 ```
 
 ## How the world stays "live"
@@ -52,9 +61,11 @@ bridge graph. Room occupancy drives room state (idle/active/live/private) and se
 start/end, each emitted as a typed `WorldStreamEvent`. `useLiveWorld` subscribes the Zustand
 store to that same stream, so the event feed, NOW LIVE carousel, and agent/room state shown in
 the React HUD are a direct read of what the simulation is actually doing — not a separate random
-generator. The Live Observation Panel's viewport is a *second camera* onto the exact same running
-world (rendered into an offscreen texture by the one shared WebGL context and blitted onto its own
-canvas), not a static illustration.
+generator. Every live viewport — the Live Observation Panel, and every card in the LIVE ROOMS grid
+— is a *second camera* onto the exact same running world (rendered into an offscreen texture by the
+one shared WebGL context and blitted onto its own canvas), not a static illustration. `WorldEngine`
+round-robins a small, fixed-size batch of these observer cameras per animation frame, so a grid of a
+dozen simultaneous live cards stays cheap regardless of how many are on screen.
 
 ## Connecting a real backend later
 

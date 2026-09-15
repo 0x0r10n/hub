@@ -25,6 +25,7 @@ interface WorldStoreState {
   selectedAgentId: string | null;
   focusedSessionId: string | null;
   focusedZoneId: ZoneId | null;
+  expandedRoomId: string | null;
   searchQuery: string;
   sidebarCollapsed: boolean;
   activeNav: NavKey;
@@ -34,6 +35,7 @@ interface WorldStoreState {
   selectAgent: (id: string | null) => void;
   focusSession: (id: string | null) => void;
   focusZone: (id: ZoneId | null) => void;
+  expandRoom: (id: string | null) => void;
   setSearch: (q: string) => void;
   toggleSidebar: () => void;
   setSidebarCollapsed: (v: boolean) => void;
@@ -94,13 +96,15 @@ export const useWorldStore = create<WorldStoreState>((set, get) => ({
   selectedAgentId: null,
   focusedSessionId: null,
   focusedZoneId: null,
+  expandedRoomId: null,
   searchQuery: "",
   sidebarCollapsed: false,
-  activeNav: "map",
+  activeNav: "rooms",
   isBooting: true,
   favoriteAgentIds: new Set(),
 
   selectAgent: (id) => set({ selectedAgentId: id }),
+  expandRoom: (id) => set({ expandedRoomId: id }),
   toggleFavorite: (id) =>
     set((s) => {
       const next = new Set(s.favoriteAgentIds);
