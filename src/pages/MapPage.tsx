@@ -7,12 +7,14 @@ import { EventFeed } from "@/components/events/EventFeed";
 import { AgentInspector } from "@/components/agents/AgentInspector";
 import { LiveSessionPanel } from "@/components/sessions/LiveSessionPanel";
 import { LiveMonitorPreview } from "@/components/sessions/LiveMonitorPreview";
+import { BrandPanel } from "@/components/layout/BrandPanel";
 
 export function MapPage() {
   const selectedAgentId = useWorldStore((s) => s.selectedAgentId);
   const focusedSessionId = useWorldStore((s) => s.focusedSessionId);
   const selectAgent = useWorldStore((s) => s.selectAgent);
   const focusSession = useWorldStore((s) => s.focusSession);
+  const setActiveNav = useWorldStore((s) => s.setActiveNav);
   const sessions = useWorldStore((s) => s.sessions);
 
   const hasOverlay = Boolean(selectedAgentId || focusedSessionId);
@@ -56,8 +58,9 @@ export function MapPage() {
               {topSession && <LiveMonitorPreview session={topSession} onExpand={() => focusSession(topSession.id)} />}
               <GlobalStats />
               <div className="min-h-0 flex-1">
-                <EventFeed />
+                <EventFeed onViewAll={() => setActiveNav("events")} />
               </div>
+              <BrandPanel className="hidden shrink-0 border-t border-void-700 lg:block" />
             </motion.div>
           )}
         </AnimatePresence>

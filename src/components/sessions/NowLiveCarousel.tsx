@@ -17,6 +17,9 @@ export function NowLiveCarousel({ className = "" }: { className?: string }) {
       <div className="flex items-center gap-2 px-3 pt-2">
         <PixelIcon name="bolt" size={10} className="text-neon-cyan" />
         <span className="font-display text-[9px] tracking-wider text-void-300">NOW LIVE</span>
+        <button onClick={() => setActiveNav("rooms")} className="ml-auto font-mono text-[9px] uppercase tracking-wide text-void-500 hover:text-neon-cyan">
+          View all rooms ›
+        </button>
       </div>
       <div className="flex gap-2 overflow-x-auto px-3 py-2.5 [scrollbar-width:thin] snap-x">
         {live.map((session) => (

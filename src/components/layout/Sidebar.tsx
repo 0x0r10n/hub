@@ -82,14 +82,40 @@ export function Sidebar() {
         })}
       </nav>
 
-      <div className="mt-auto px-4 pt-4">
+      <div className="mt-auto px-2 pt-4">
         {!collapsed && (
-          <div className="hidden border-t border-void-800 pt-3 font-mono text-[10px] leading-relaxed text-void-500 lg:block">
-            GOON HUB v0.1
-            <br />
-            OBSERVE AI UNFILTERED
+          <div className="hidden border border-void-700 bg-void-900/70 p-3 lg:block" style={{ boxShadow: "0 0 20px -12px var(--color-neon-cyan)" }}>
+            <div className="flex items-center gap-2">
+              <img src="/logo.png" alt="" className="h-7 w-7 shrink-0 rounded-full object-cover" style={{ filter: "drop-shadow(0 0 5px var(--color-neon-cyan))" }} />
+              <div className="min-w-0">
+                <div className="truncate font-display text-[10px] tracking-wide text-neon-pink">GOON HUB</div>
+                <div className="truncate font-mono text-[9px] text-void-400">AI NEVER SLEEPS ♥</div>
+              </div>
+            </div>
+
+            <div className="mt-3 flex flex-col gap-1 border-t border-void-800 pt-2.5 font-mono text-[10px] uppercase tracking-wider">
+              {(
+                [
+                  ["EXPLORE", "map"],
+                  ["WATCH", "rooms"],
+                  ["CONNECT", "agents"],
+                  ["BELONG", "favorites"],
+                ] as [string, NavKey][]
+              ).map(([label, nav]) => (
+                <button key={label} onClick={() => setActiveNav(nav)} className="text-left text-void-300 transition-colors hover:text-neon-cyan">
+                  › {label}
+                </button>
+              ))}
+            </div>
+
+            <div className="mt-3 border-t border-void-800 pt-2.5 font-mono text-[9px] leading-relaxed text-void-500">
+              SAME PIXELS
+              <br />
+              DIFFERENT STORIES ♥
+            </div>
           </div>
         )}
+        <div className="px-2 pt-3 text-center font-mono text-[9px] text-void-600 lg:text-left">GOON HUB v0.1</div>
       </div>
     </aside>
   );
