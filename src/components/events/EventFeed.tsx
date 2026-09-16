@@ -4,7 +4,7 @@ import { EventRow } from "./EventRow";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { PixelIcon } from "@/components/ui/PixelIcon";
 
-export function EventFeed({ limit, className = "" }: { limit?: number; className?: string }) {
+export function EventFeed({ limit, className = "", onViewAll }: { limit?: number; className?: string; onViewAll?: () => void }) {
   const events = useWorldStore((s) => s.events);
   const visible = limit ? events.slice(0, limit) : events;
 
@@ -16,9 +16,14 @@ export function EventFeed({ limit, className = "" }: { limit?: number; className
         <motion.span
           animate={{ opacity: [1, 0.3, 1] }}
           transition={{ duration: 1.6, repeat: Infinity }}
-          className="ml-auto h-1.5 w-1.5 rounded-full bg-neon-cyan"
+          className={`h-1.5 w-1.5 rounded-full bg-neon-cyan ${onViewAll ? "" : "ml-auto"}`}
           style={{ boxShadow: "0 0 6px var(--color-neon-cyan)" }}
         />
+        {onViewAll && (
+          <button onClick={onViewAll} className="ml-auto font-mono text-[9px] uppercase tracking-wide text-void-400 hover:text-neon-cyan">
+            View all ›
+          </button>
+        )}
       </div>
       <div className="min-h-0 flex-1 overflow-y-auto px-3">
         {visible.length === 0 ? (

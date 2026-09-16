@@ -3,14 +3,14 @@ import { AnimatedCounter } from "@/components/ui/AnimatedCounter";
 import { SearchBar } from "@/components/ui/SearchBar";
 import { Logo } from "./Logo";
 import { formatCount } from "@/lib/time";
-import { PixelIcon } from "@/components/ui/PixelIcon";
+import { PixelIcon, type PixelIconName } from "@/components/ui/PixelIcon";
 
-const NAV_ITEMS: { key: NavKey; label: string }[] = [
-  { key: "map", label: "MAP" },
-  { key: "agents", label: "AGENTS" },
-  { key: "rooms", label: "ROOMS" },
-  { key: "events", label: "EVENTS" },
-  { key: "archive", label: "ARCHIVE" },
+const NAV_ITEMS: { key: NavKey; label: string; icon: PixelIconName }[] = [
+  { key: "map", label: "MAP", icon: "map" },
+  { key: "agents", label: "AGENTS", icon: "users" },
+  { key: "rooms", label: "ROOMS", icon: "door" },
+  { key: "events", label: "EVENTS", icon: "radar" },
+  { key: "archive", label: "ARCHIVE", icon: "archive" },
 ];
 
 export function TopNav() {
@@ -33,8 +33,9 @@ export function TopNav() {
         <PixelIcon name="chevron" size={10} className={sidebarCollapsed ? "" : "rotate-180"} />
       </button>
 
-      <button onClick={() => setActiveNav("map")} className="shrink-0">
+      <button onClick={() => setActiveNav("map")} className="flex shrink-0 items-center gap-2">
         <Logo compact={false} />
+        <span className="hidden rounded-sm border border-void-600 px-1 py-0.5 font-mono text-[8px] text-void-500 lg:inline">v0.1</span>
       </button>
 
       <div className="hidden items-center gap-1.5 rounded-sm border border-neon-cyan/40 bg-neon-cyan/10 px-2 py-1 lg:flex">
@@ -47,10 +48,11 @@ export function TopNav() {
           <button
             key={item.key}
             onClick={() => setActiveNav(item.key)}
-            className={`relative px-3 py-1.5 font-mono text-[13px] uppercase tracking-wider transition-colors ${
+            className={`relative flex items-center gap-1.5 px-3 py-1.5 font-mono text-[13px] uppercase tracking-wider transition-colors ${
               activeNav === item.key ? "text-neon-cyan" : "text-void-300 hover:text-void-100"
             }`}
           >
+            <PixelIcon name={item.icon} size={11} />
             {item.label}
             {activeNav === item.key && (
               <span

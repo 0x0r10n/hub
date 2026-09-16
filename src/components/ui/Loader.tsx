@@ -1,6 +1,12 @@
 export function BootLoader() {
   return (
     <div className="fixed inset-0 z-100 flex flex-col items-center justify-center gap-4 bg-void-950">
+      <img
+        src="/logo.png"
+        alt=""
+        className="h-24 w-24 animate-float rounded-full object-cover"
+        style={{ filter: "drop-shadow(0 0 18px var(--color-neon-cyan))" }}
+      />
       <div className="font-display text-lg tracking-widest text-neon-cyan text-shadow-glow">GOON HUB</div>
       <div className="flex items-center gap-2 font-mono text-sm text-void-300">
         <span className="h-2 w-2 animate-pulse-slow rounded-full bg-neon-cyan" style={{ boxShadow: "0 0 8px var(--color-neon-cyan)" }} />
