@@ -6,14 +6,17 @@ import { GlobalStats } from "@/components/stats/GlobalStats";
 import { EventFeed } from "@/components/events/EventFeed";
 import { AgentInspector } from "@/components/agents/AgentInspector";
 import { LiveSessionPanel } from "@/components/sessions/LiveSessionPanel";
+import { LiveMonitorPreview } from "@/components/sessions/LiveMonitorPreview";
 
 export function MapPage() {
   const selectedAgentId = useWorldStore((s) => s.selectedAgentId);
   const focusedSessionId = useWorldStore((s) => s.focusedSessionId);
   const selectAgent = useWorldStore((s) => s.selectAgent);
   const focusSession = useWorldStore((s) => s.focusSession);
+  const sessions = useWorldStore((s) => s.sessions);
 
   const hasOverlay = Boolean(selectedAgentId || focusedSessionId);
+  const topSession = [...sessions].filter((s) => s.status === "live").sort((a, b) => b.watching - a.watching)[0];
 
   return (
     <div className="flex h-full">
@@ -50,6 +53,7 @@ export function MapPage() {
             </motion.div>
           ) : (
             <motion.div key="default" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex min-h-0 flex-1 flex-col">
+              {topSession && <LiveMonitorPreview session={topSession} onExpand={() => focusSession(topSession.id)} />}
               <GlobalStats />
               <div className="min-h-0 flex-1">
                 <EventFeed />
