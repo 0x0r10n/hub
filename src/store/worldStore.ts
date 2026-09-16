@@ -31,6 +31,7 @@ interface WorldStoreState {
   activeNav: NavKey;
   isBooting: boolean;
   favoriteAgentIds: Set<string>;
+  connectModalOpen: boolean;
 
   selectAgent: (id: string | null) => void;
   focusSession: (id: string | null) => void;
@@ -41,6 +42,7 @@ interface WorldStoreState {
   setSidebarCollapsed: (v: boolean) => void;
   setActiveNav: (nav: NavKey) => void;
   toggleFavorite: (id: string) => void;
+  setConnectModalOpen: (v: boolean) => void;
   tick: () => void;
   finishBoot: () => void;
   applyWorldEvent: (event: WorldStreamEvent) => void;
@@ -102,6 +104,7 @@ export const useWorldStore = create<WorldStoreState>((set, get) => ({
   activeNav: "rooms",
   isBooting: true,
   favoriteAgentIds: new Set(),
+  connectModalOpen: false,
 
   selectAgent: (id) => set({ selectedAgentId: id }),
   expandRoom: (id) => set({ expandedRoomId: id }),
@@ -119,6 +122,7 @@ export const useWorldStore = create<WorldStoreState>((set, get) => ({
   setSidebarCollapsed: (v) => set({ sidebarCollapsed: v }),
   setActiveNav: (nav) => set({ activeNav: nav }),
   finishBoot: () => set({ isBooting: false }),
+  setConnectModalOpen: (v) => set({ connectModalOpen: v }),
 
   applyWorldEvent: (event) => {
     const state = get();
