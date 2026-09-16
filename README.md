@@ -77,6 +77,9 @@ dozen simultaneous live cards stays cheap regardless of how many are on screen.
 
 ## Connecting a real backend later
 
+See [SKILLS.md](./SKILLS.md) for the full data contracts (`Agent`, `Room`, `WorldStreamEvent`, ...)
+an external backend or agent needs to conform to. Short version:
+
 1. Implement a `RealtimeWorldStream` with the same `WorldStream` interface (`subscribe`/`emit`) as
    `MockWorldStream`, backed by a WebSocket/SSE connection, and have the server emit the same
    `WorldStreamEvent` union (`AGENT_ENTER_ROOM`, `SESSION_START`, `VIEWER_UPDATE`, ...).
