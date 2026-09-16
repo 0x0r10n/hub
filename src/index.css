@@ -11,13 +11,13 @@
    * in inline styles). Re-theming the app is done here, by changing what these tokens resolve
    * to -- not by touching the ~30 components that reference them. */
   --color-void-950: #050509; /* bg */
-  --color-void-900: #08080f; /* bg */
-  --color-void-850: #0b0710; /* bg */
-  --color-void-800: #0d0a12; /* surface */
-  --color-void-700: #110b18; /* surface elevated */
-  --color-void-600: #160d1d; /* surface elevated 2 / hover */
-  --color-void-500: #2a1730; /* border */
-  --color-void-400: #3a1940; /* border, brighter */
+  --color-void-900: #090911; /* panel */
+  --color-void-850: #0d0a13; /* panel */
+  --color-void-800: #120b18; /* panel */
+  --color-void-700: #1a1020; /* surface elevated */
+  --color-void-600: #221527; /* surface elevated 2 / hover */
+  --color-void-500: #28172f; /* border */
+  --color-void-400: #3b1a43; /* border, brighter */
   --color-void-300: #7d6690; /* muted lavender text */
   --color-void-200: #b9a4cf; /* lavender text */
   --color-void-100: #f3eef9; /* near-white primary text */
@@ -28,7 +28,7 @@
   --color-neon-cyan: #ff2da6; /* Electric Pink -- PRIMARY accent */
   --color-neon-pink: #ff4db8; /* Hot Pink */
   --color-neon-magenta: #e9008c; /* Magenta */
-  --color-neon-violet: #8b4dff; /* Purple -- SECONDARY: rooms / world / special states */
+  --color-neon-violet: #b84cff; /* Purple -- SECONDARY: rooms / world / special states */
   --color-neon-teal: #2ce8b5; /* district-identity color only (Commons), unchanged */
   --color-neon-amber: #ffc857; /* status/utility accent only (favorites, recovering), unchanged */
   --color-neon-orange: #ff7a45; /* character-variety accent only, unchanged */
@@ -39,7 +39,7 @@
   --color-deep-magenta: #8a075c;
 
   --shadow-glow-cyan: 0 0 8px rgba(255, 45, 166, 0.55), 0 0 24px rgba(255, 45, 166, 0.2);
-  --shadow-glow-violet: 0 0 8px rgba(139, 77, 255, 0.55), 0 0 24px rgba(139, 77, 255, 0.2);
+  --shadow-glow-violet: 0 0 8px rgba(184, 76, 255, 0.55), 0 0 24px rgba(184, 76, 255, 0.2);
   --shadow-glow-magenta: 0 0 8px rgba(233, 0, 140, 0.55), 0 0 24px rgba(233, 0, 140, 0.2);
   --shadow-glow-green: 0 0 8px rgba(109, 255, 143, 0.55), 0 0 20px rgba(109, 255, 143, 0.2);
   --shadow-glow-amber: 0 0 8px rgba(255, 200, 87, 0.55), 0 0 20px rgba(255, 200, 87, 0.2);
@@ -109,7 +109,7 @@ html {
   --primary-hot: var(--color-neon-pink);
   --primary-glow: 0 0 8px rgba(255, 45, 166, 0.55), 0 0 24px rgba(255, 45, 166, 0.25);
   --secondary: var(--color-neon-violet);
-  --secondary-glow: 0 0 8px rgba(139, 77, 255, 0.55), 0 0 24px rgba(139, 77, 255, 0.25);
+  --secondary-glow: 0 0 8px rgba(184, 76, 255, 0.55), 0 0 24px rgba(184, 76, 255, 0.25);
   --online: var(--color-neon-green);
 }
 

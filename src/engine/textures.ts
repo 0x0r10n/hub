@@ -73,7 +73,7 @@ const VOID_600 = "#232a3f";
 export const ACCENT_HEX: Record<string, string> = {
   "neon-cyan": "#ff2da6",
   "neon-teal": "#2ce8b5",
-  "neon-violet": "#8b4dff",
+  "neon-violet": "#b84cff",
   "neon-magenta": "#e9008c",
   "neon-pink": "#ff4db8",
   "neon-amber": "#ffc857",
