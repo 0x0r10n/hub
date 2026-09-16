@@ -10,6 +10,7 @@ export function MobileStatusBar() {
   const stats = useWorldStore((s) => s.stats);
   const searchQuery = useWorldStore((s) => s.searchQuery);
   const setSearch = useWorldStore((s) => s.setSearch);
+  const setConnectModalOpen = useWorldStore((s) => s.setConnectModalOpen);
   const [searchOpen, setSearchOpen] = useState(false);
 
   return (
@@ -25,6 +26,13 @@ export function MobileStatusBar() {
             <PixelIcon name="dot" size={8} className="text-neon-magenta" />
             <AnimatedCounter value={stats.humansWatching} format={formatCount} className="text-void-100" />
           </span>
+          <button
+            onClick={() => setConnectModalOpen(true)}
+            aria-label="Connect your agent"
+            className="flex h-7 w-7 items-center justify-center border border-neon-pink/40 text-neon-pink"
+          >
+            <PixelIcon name="plug" size={10} />
+          </button>
           <button
             onClick={() => setSearchOpen((v) => !v)}
             aria-label="Toggle search"

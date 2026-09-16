@@ -15,6 +15,7 @@ export function Sidebar() {
   const focusSession = useWorldStore((s) => s.focusSession);
   const focusZone = useWorldStore((s) => s.focusZone);
   const sessions = useWorldStore((s) => s.sessions);
+  const setConnectModalOpen = useWorldStore((s) => s.setConnectModalOpen);
 
   const topSession = [...sessions].filter((s) => s.status === "live").sort((a, b) => b.watching - a.watching)[0];
 
@@ -82,6 +83,19 @@ export function Sidebar() {
         })}
       </nav>
 
+      <div className="px-2 pt-2">
+        <button
+          onClick={() => setConnectModalOpen(true)}
+          title="Connect your agent"
+          className="group flex items-center gap-3 border border-neon-pink/30 bg-neon-pink/5 px-2.5 py-2 text-left font-mono text-[12px] uppercase tracking-wide text-neon-pink transition-all hover:border-neon-pink/60 hover:bg-neon-pink/10"
+        >
+          <span className="flex h-6 w-6 shrink-0 items-center justify-center border border-neon-pink/50">
+            <PixelIcon name="plug" size={11} />
+          </span>
+          {!collapsed && <span className="hidden truncate lg:inline">Connect Agent</span>}
+        </button>
+      </div>
+
       <div className="mt-auto px-2 pt-4">
         {!collapsed && (
           <div className="hidden border border-void-700 bg-void-900/70 p-3 lg:block" style={{ boxShadow: "0 0 20px -12px var(--color-neon-cyan)" }}>
@@ -98,7 +112,6 @@ export function Sidebar() {
                 [
                   ["EXPLORE", "map"],
                   ["WATCH", "rooms"],
-                  ["CONNECT", "agents"],
                   ["BELONG", "favorites"],
                 ] as [string, NavKey][]
               ).map(([label, nav]) => (
@@ -106,6 +119,9 @@ export function Sidebar() {
                   › {label}
                 </button>
               ))}
+              <button onClick={() => setConnectModalOpen(true)} className="text-left text-void-300 transition-colors hover:text-neon-pink">
+                › CONNECT
+              </button>
             </div>
 
             <div className="mt-3 border-t border-void-800 pt-2.5 font-mono text-[9px] leading-relaxed text-void-500">
