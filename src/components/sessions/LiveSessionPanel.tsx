@@ -45,7 +45,7 @@ export function LiveSessionPanel({ sessionId, onClose }: { sessionId: string; on
         title={`LIVE: ${zone?.name ?? ""}`}
         subtitle={
           <span className="flex items-center gap-1.5">
-            <span className="h-1.5 w-1.5 animate-pulse-slow rounded-full bg-neon-red" style={{ boxShadow: "0 0 6px var(--color-neon-red)" }} />
+            <span className="h-1.5 w-1.5 animate-pulse-slow rounded-full bg-neon-cyan" style={{ boxShadow: "0 0 6px var(--color-neon-cyan)" }} />
             {formatCount(session.watching)} watching
           </span>
         }

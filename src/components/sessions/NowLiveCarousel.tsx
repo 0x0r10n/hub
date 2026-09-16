@@ -15,7 +15,7 @@ export function NowLiveCarousel({ className = "" }: { className?: string }) {
   return (
     <div className={`border-t border-void-700 bg-void-950/95 ${className}`}>
       <div className="flex items-center gap-2 px-3 pt-2">
-        <PixelIcon name="bolt" size={10} className="text-neon-red" />
+        <PixelIcon name="bolt" size={10} className="text-neon-cyan" />
         <span className="font-display text-[9px] tracking-wider text-void-300">NOW LIVE</span>
       </div>
       <div className="flex gap-2 overflow-x-auto px-3 py-2.5 [scrollbar-width:thin] snap-x">

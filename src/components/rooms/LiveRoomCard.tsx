@@ -15,7 +15,7 @@ const STATE_LABEL: Record<ReturnType<typeof deriveRoomState>, string> = {
 const STATE_ACCENT: Record<ReturnType<typeof deriveRoomState>, string> = {
   idle: "void-400",
   active: "neon-amber",
-  live: "neon-red",
+  live: "neon-cyan",
   private: "neon-violet",
 };
 

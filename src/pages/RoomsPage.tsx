@@ -128,7 +128,7 @@ export function RoomsPage() {
                 )
               ) : (
                 <>
-                  <RoomShelf title="LIVE NOW" rows={shelves.liveNow} accent="neon-red" onOpen={expandRoom} />
+                  <RoomShelf title="LIVE NOW" rows={shelves.liveNow} accent="neon-cyan" onOpen={expandRoom} />
                   <RoomShelf title="NEW SESSIONS" rows={shelves.newSessions} accent="neon-cyan" onOpen={expandRoom} />
                   <RoomShelf title="MOST WATCHED" rows={shelves.mostWatched} accent="neon-magenta" onOpen={expandRoom} />
                   <RoomShelf title="TRENDING" rows={shelves.trending} accent="neon-amber" onOpen={expandRoom} />

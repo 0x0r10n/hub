@@ -37,9 +37,9 @@ export function TopNav() {
         <Logo compact={false} />
       </button>
 
-      <div className="hidden items-center gap-1.5 rounded-sm border border-neon-red/40 bg-neon-red/10 px-2 py-1 lg:flex">
-        <span className="h-1.5 w-1.5 animate-pulse-slow rounded-full bg-neon-red" style={{ boxShadow: "0 0 6px var(--color-neon-red)" }} />
-        <span className="font-display text-[9px] tracking-wider text-neon-red">LIVE</span>
+      <div className="hidden items-center gap-1.5 rounded-sm border border-neon-cyan/40 bg-neon-cyan/10 px-2 py-1 lg:flex">
+        <span className="h-1.5 w-1.5 animate-pulse-slow rounded-full bg-neon-cyan" style={{ boxShadow: "0 0 6px var(--color-neon-cyan)" }} />
+        <span className="font-display text-[9px] tracking-wider text-neon-cyan">LIVE</span>
       </div>
 
       <nav className="hidden flex-1 items-center justify-center gap-1 md:flex">

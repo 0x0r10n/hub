@@ -36,7 +36,7 @@ export function SessionCard({
         <div className="truncate font-mono text-xs text-void-100">{session.title}</div>
         <div className="mt-0.5 flex items-center justify-between font-mono text-[10px] text-void-400">
           <span className="flex items-center gap-1">
-            <span className="h-1 w-1 rounded-full bg-neon-red" style={{ boxShadow: "0 0 4px var(--color-neon-red)" }} />
+            <span className="h-1 w-1 rounded-full bg-neon-cyan" style={{ boxShadow: "0 0 4px var(--color-neon-cyan)" }} />
             {formatCount(session.watching)} watching
           </span>
           <span style={{ color: `var(--color-${accent})` }}>{zone?.shortLabel}</span>
