@@ -1,4 +1,5 @@
 import { AnimatePresence, motion } from "framer-motion";
+import { Analytics } from "@vercel/analytics/react";
 import { useLiveWorld } from "@/hooks/useLiveWorld";
 import { useWorldStore } from "@/store/worldStore";
 import { AppShell } from "@/components/layout/AppShell";
@@ -32,6 +33,7 @@ function App() {
         </motion.div>
         <GlobalInspectorDrawer />
       </AppShell>
+      <Analytics />
     </>
   );
 }
