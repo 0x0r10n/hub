@@ -67,19 +67,21 @@ const VOID_800 = "#121623";
 const VOID_700 = "#191f30";
 const VOID_600 = "#232a3f";
 
-/** Maps the Tailwind CSS accent tokens used throughout the data/UI layer to real hex colors for canvas/PIXI. */
+/** Maps the Tailwind CSS accent tokens used throughout the data/UI layer to real hex colors for
+ * canvas/PIXI (which can't read CSS variables). Keep these in sync with the --color-* values in
+ * src/index.css -- same token names, same hexes, so the in-world render matches the DOM theme. */
 export const ACCENT_HEX: Record<string, string> = {
-  "neon-cyan": "#34eaf2",
+  "neon-cyan": "#ff2da6",
   "neon-teal": "#2ce8b5",
-  "neon-violet": "#b083ff",
-  "neon-magenta": "#ff5fd1",
-  "neon-pink": "#ff8fd6",
+  "neon-violet": "#8b4dff",
+  "neon-magenta": "#e9008c",
+  "neon-pink": "#ff4db8",
   "neon-amber": "#ffc857",
   "neon-orange": "#ff7a45",
   "neon-red": "#ff4d6d",
   "neon-green": "#6dff8f",
   "neon-blue": "#5b8cff",
-  "void-300": "#6c7699",
+  "void-300": "#7d6690",
 };
 
 export function resolveAccentHex(accentToken: string): string {
@@ -427,12 +429,12 @@ export function makeBuildingTexture(w: number, h: number, accent: string, state:
 
   drawDistrictMotif(ctx, zoneId, w, h, roofH, wallBase, accent, rand);
 
-  // roof beacon for live rooms
+  // roof beacon for live rooms -- electric pink, matching the UI's LIVE identity
   if (state === "live") {
     ctx.save();
-    ctx.shadowColor = "#ff4d6d";
+    ctx.shadowColor = "#ff2da6";
     ctx.shadowBlur = 10;
-    ctx.fillStyle = "#ff4d6d";
+    ctx.fillStyle = "#ff2da6";
     ctx.beginPath();
     ctx.arc(w / 2, roofH * 0.35, 3, 0, Math.PI * 2);
     ctx.fill();

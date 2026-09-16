@@ -270,7 +270,7 @@ export function stateAccent(state: AgentState): string {
     case "roaming":
       return "neon-cyan";
     case "idle":
-      return "void-300";
+      return "neon-violet";
     case "recovering":
       return "neon-amber";
     case "observing":

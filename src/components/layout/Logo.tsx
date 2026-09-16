@@ -8,8 +8,11 @@ export function Logo({ compact = false }: { compact?: boolean }) {
         G
       </div>
       {!compact && (
-        <span className="font-display text-[13px] tracking-widest text-void-100">
-          GOON<span className="text-neon-magenta">_</span>HUB
+        <span
+          className="bg-clip-text font-display text-[13px] tracking-widest text-transparent"
+          style={{ backgroundImage: "linear-gradient(90deg, var(--color-void-100), var(--color-neon-pink))" }}
+        >
+          GOON<span style={{ color: "var(--color-neon-magenta)", WebkitTextFillColor: "var(--color-neon-magenta)" }}>_</span>HUB
         </span>
       )}
     </div>

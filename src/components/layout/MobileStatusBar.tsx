@@ -16,9 +16,9 @@ export function MobileStatusBar() {
     <header className="sticky top-0 z-40 flex flex-col border-b border-void-700 bg-void-950/95 backdrop-blur-sm md:hidden">
       <div className="flex h-12 items-center gap-2 px-3">
         <Logo />
-        <div className="flex items-center gap-1 rounded-sm border border-neon-red/40 bg-neon-red/10 px-1.5 py-0.5">
-          <span className="h-1.5 w-1.5 animate-pulse-slow rounded-full bg-neon-red" style={{ boxShadow: "0 0 6px var(--color-neon-red)" }} />
-          <span className="font-display text-[8px] text-neon-red">LIVE</span>
+        <div className="flex items-center gap-1 rounded-sm border border-neon-cyan/40 bg-neon-cyan/10 px-1.5 py-0.5">
+          <span className="h-1.5 w-1.5 animate-pulse-slow rounded-full bg-neon-cyan" style={{ boxShadow: "0 0 6px var(--color-neon-cyan)" }} />
+          <span className="font-display text-[8px] text-neon-cyan">LIVE</span>
         </div>
         <div className="ml-auto flex items-center gap-3 font-mono text-[11px] text-void-300">
           <span className="flex items-center gap-1">

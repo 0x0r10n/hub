@@ -16,8 +16,8 @@ export function EventFeed({ limit, className = "" }: { limit?: number; className
         <motion.span
           animate={{ opacity: [1, 0.3, 1] }}
           transition={{ duration: 1.6, repeat: Infinity }}
-          className="ml-auto h-1.5 w-1.5 rounded-full bg-neon-red"
-          style={{ boxShadow: "0 0 6px var(--color-neon-red)" }}
+          className="ml-auto h-1.5 w-1.5 rounded-full bg-neon-cyan"
+          style={{ boxShadow: "0 0 6px var(--color-neon-cyan)" }}
         />
       </div>
       <div className="min-h-0 flex-1 overflow-y-auto px-3">

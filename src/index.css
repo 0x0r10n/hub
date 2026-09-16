@@ -5,32 +5,42 @@
   --font-mono: "VT323", ui-monospace, monospace;
   --font-sans: "Space Grotesk", ui-sans-serif, system-ui, sans-serif;
 
-  --color-void-950: #050609;
-  --color-void-900: #090b11;
-  --color-void-850: #0d1019;
-  --color-void-800: #121623;
-  --color-void-700: #191f30;
-  --color-void-600: #232a3f;
-  --color-void-500: #333c56;
-  --color-void-400: #4a5473;
-  --color-void-300: #6c7699;
-  --color-void-200: #9aa3c2;
-  --color-void-100: #ccd2e8;
+  /* GOON HUB identity: black x electric pink x magenta x neon purple. The void-* ramp is the
+   * app's one background/border/text scale (darkest -> lightest); neon-* are accent tokens
+   * consumed all over the UI by name (className="text-neon-cyan" etc, or var(--color-neon-cyan)
+   * in inline styles). Re-theming the app is done here, by changing what these tokens resolve
+   * to -- not by touching the ~30 components that reference them. */
+  --color-void-950: #050509; /* bg */
+  --color-void-900: #08080f; /* bg */
+  --color-void-850: #0b0710; /* bg */
+  --color-void-800: #0d0a12; /* surface */
+  --color-void-700: #110b18; /* surface elevated */
+  --color-void-600: #160d1d; /* surface elevated 2 / hover */
+  --color-void-500: #2a1730; /* border */
+  --color-void-400: #3a1940; /* border, brighter */
+  --color-void-300: #7d6690; /* muted lavender text */
+  --color-void-200: #b9a4cf; /* lavender text */
+  --color-void-100: #f3eef9; /* near-white primary text */
 
-  --color-neon-cyan: #34eaf2;
-  --color-neon-teal: #2ce8b5;
-  --color-neon-violet: #b083ff;
-  --color-neon-magenta: #ff5fd1;
-  --color-neon-pink: #ff8fd6;
-  --color-neon-amber: #ffc857;
-  --color-neon-orange: #ff7a45;
-  --color-neon-red: #ff4d6d;
-  --color-neon-green: #6dff8f;
-  --color-neon-blue: #5b8cff;
+  /* neon-cyan was the app's dominant "main accent" token (nav, focus states, buttons, glows,
+   * selection) -- pink is now the visual equivalent of what cyan used to represent, so it's
+   * repointed to Electric Pink rather than renamed, keeping every existing usage correct. */
+  --color-neon-cyan: #ff2da6; /* Electric Pink -- PRIMARY accent */
+  --color-neon-pink: #ff4db8; /* Hot Pink */
+  --color-neon-magenta: #e9008c; /* Magenta */
+  --color-neon-violet: #8b4dff; /* Purple -- SECONDARY: rooms / world / special states */
+  --color-neon-teal: #2ce8b5; /* district-identity color only (Commons), unchanged */
+  --color-neon-amber: #ffc857; /* status/utility accent only (favorites, recovering), unchanged */
+  --color-neon-orange: #ff7a45; /* character-variety accent only, unchanged */
+  --color-neon-red: #ff4d6d; /* district-identity (Arena) + negative events only, unchanged */
+  --color-neon-green: #6dff8f; /* ONLINE status only, unchanged */
+  --color-neon-blue: #5b8cff; /* very limited secondary/cool accent, unchanged */
 
-  --shadow-glow-cyan: 0 0 8px rgba(52, 234, 242, 0.55), 0 0 24px rgba(52, 234, 242, 0.2);
-  --shadow-glow-violet: 0 0 8px rgba(176, 131, 255, 0.55), 0 0 24px rgba(176, 131, 255, 0.2);
-  --shadow-glow-magenta: 0 0 8px rgba(255, 95, 209, 0.55), 0 0 24px rgba(255, 95, 209, 0.2);
+  --color-deep-magenta: #8a075c;
+
+  --shadow-glow-cyan: 0 0 8px rgba(255, 45, 166, 0.55), 0 0 24px rgba(255, 45, 166, 0.2);
+  --shadow-glow-violet: 0 0 8px rgba(139, 77, 255, 0.55), 0 0 24px rgba(139, 77, 255, 0.2);
+  --shadow-glow-magenta: 0 0 8px rgba(233, 0, 140, 0.55), 0 0 24px rgba(233, 0, 140, 0.2);
   --shadow-glow-green: 0 0 8px rgba(109, 255, 143, 0.55), 0 0 20px rgba(109, 255, 143, 0.2);
   --shadow-glow-amber: 0 0 8px rgba(255, 200, 87, 0.55), 0 0 20px rgba(255, 200, 87, 0.2);
 
@@ -80,6 +90,27 @@
 
 html {
   color-scheme: dark;
+}
+
+/* Plain semantic aliases onto the palette above, for anywhere it reads better than the raw
+ * void/neon token names (inline styles, future components). Keep these in sync with @theme above
+ * if the palette changes -- these are aliases, not a second source of truth. */
+:root {
+  --bg: var(--color-void-950);
+  --bg-secondary: var(--color-void-900);
+  --bg-tertiary: var(--color-void-850);
+  --surface: var(--color-void-800);
+  --surface-elevated: var(--color-void-700);
+  --border: var(--color-void-500);
+  --border-bright: var(--color-void-400);
+  --text: var(--color-void-100);
+  --text-muted: var(--color-void-300);
+  --primary: var(--color-neon-cyan);
+  --primary-hot: var(--color-neon-pink);
+  --primary-glow: 0 0 8px rgba(255, 45, 166, 0.55), 0 0 24px rgba(255, 45, 166, 0.25);
+  --secondary: var(--color-neon-violet);
+  --secondary-glow: 0 0 8px rgba(139, 77, 255, 0.55), 0 0 24px rgba(139, 77, 255, 0.25);
+  --online: var(--color-neon-green);
 }
 
 body {
@@ -134,8 +165,8 @@ body {
 
 .bg-grid {
   background-image:
-    linear-gradient(rgba(52, 234, 242, 0.05) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(52, 234, 242, 0.05) 1px, transparent 1px);
+    linear-gradient(rgba(255, 45, 166, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 45, 166, 0.05) 1px, transparent 1px);
   background-size: 24px 24px;
 }
 
