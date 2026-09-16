@@ -61,16 +61,18 @@ export function Sidebar() {
                 item.onSelect?.();
               }}
               title={item.label}
-              className={`group flex items-center gap-3 rounded-sm px-2.5 py-2 text-left font-mono text-[12px] uppercase tracking-wide transition-colors ${
+              className={`group flex items-center gap-3 border px-2.5 py-2 text-left font-mono text-[12px] uppercase tracking-wide transition-all ${
                 active
-                  ? "bg-neon-cyan/10 text-neon-cyan"
-                  : "text-void-300 hover:bg-void-800 hover:text-void-100"
+                  ? "border-neon-cyan/60 bg-neon-cyan/10 text-neon-cyan"
+                  : "border-transparent text-void-300 hover:border-neon-cyan/25 hover:bg-void-800 hover:text-void-100"
               }`}
+              style={active ? { boxShadow: "0 0 14px -4px var(--color-neon-cyan), inset 0 0 12px -8px var(--color-neon-cyan)" } : undefined}
             >
               <span
                 className={`flex h-6 w-6 shrink-0 items-center justify-center border ${
-                  active ? "border-neon-cyan/50" : "border-void-600 group-hover:border-void-400"
+                  active ? "border-neon-cyan/60" : "border-void-600 group-hover:border-void-400"
                 }`}
+                style={active ? { boxShadow: "0 0 8px -2px var(--color-neon-cyan)" } : undefined}
               >
                 <PixelIcon name={item.icon} size={11} />
               </span>

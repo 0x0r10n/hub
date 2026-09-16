@@ -41,10 +41,21 @@ export function LiveRoomCard({
   return (
     <button
       onClick={onClick}
-      className={`group relative flex w-full flex-col overflow-hidden border bg-void-950 text-left transition-colors ${
-        state === "idle" ? "border-void-800 hover:border-void-600" : "border-void-700 hover:border-void-400"
+      className={`group relative flex w-full flex-col overflow-hidden border bg-void-950 text-left transition-all duration-150 hover:scale-[1.012] ${
+        state === "idle" ? "border-void-800 hover:border-void-600" : "border-void-700 hover:border-neon-cyan/60"
       }`}
+      style={state === "live" ? { boxShadow: "0 0 16px -8px var(--color-neon-cyan)" } : undefined}
     >
+      {state === "live" && (
+        <span
+          aria-hidden
+          className="animate-pulse-slow pointer-events-none absolute inset-0 z-10"
+          style={{ boxShadow: "inset 0 0 0 1px color-mix(in oklab, var(--color-neon-cyan) 70%, transparent)" }}
+        />
+      )}
+      <span aria-hidden className={`pointer-events-none absolute left-0 top-0 z-10 h-2.5 w-2.5 border-l border-t ${state === "idle" ? "border-void-700" : "border-void-500 group-hover:border-neon-cyan/70"}`} />
+      <span aria-hidden className={`pointer-events-none absolute right-0 top-0 z-10 h-2.5 w-2.5 border-r border-t ${state === "idle" ? "border-void-700" : "border-void-500 group-hover:border-neon-cyan/70"}`} />
+
       <div className="relative h-32 overflow-hidden bg-void-950 sm:h-36">
         <ObserverViewport x={center.x} y={center.y} zoom={1.7} />
         <div className={`pointer-events-none absolute inset-0 bg-gradient-to-t from-void-950/95 via-transparent to-transparent ${state === "idle" ? "opacity-90" : "opacity-70"}`} />

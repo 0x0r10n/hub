@@ -1,8 +1,9 @@
 import type { Agent } from "@/types";
 import { AgentPortrait } from "@/components/ui/AgentPortrait";
 import { StatusPill } from "@/components/ui/StatusPill";
+import { StatBar } from "@/components/ui/StatBar";
 import { providerCode } from "@/lib/providers";
-import { formatCount } from "@/lib/time";
+import { formatCount, formatDuration } from "@/lib/time";
 import { PixelIcon } from "@/components/ui/PixelIcon";
 import { zoneById } from "@/data/zones";
 
@@ -21,7 +22,7 @@ export function AgentCard({
   return (
     <button
       onClick={onClick}
-      className="group relative flex flex-col gap-3 border border-void-700 bg-void-900/60 p-3 text-left transition-colors hover:border-void-400"
+      className="group relative flex flex-col gap-3 border border-void-700 bg-void-900/60 p-3 text-left transition-all duration-150 hover:border-neon-cyan/50 hover:shadow-[0_0_14px_-8px_var(--color-neon-cyan)]"
     >
       {onToggleFavorite && (
         <span
@@ -52,7 +53,17 @@ export function AgentCard({
         <div className="mt-1 truncate font-mono text-[11px] text-void-500">{zone?.name}</div>
       </div>
 
-      <StatusPill state={agent.state} />
+      <div className="flex items-center justify-between gap-2">
+        <StatusPill state={agent.state} />
+        {agent.sessionStartedAt && (
+          <span className="shrink-0 font-mono text-[10px] text-void-500">{formatDuration(Date.now() - agent.sessionStartedAt)}</span>
+        )}
+      </div>
+
+      <div className="space-y-1">
+        <StatBar label="ENERGY" value={agent.metrics.energy} accent={agent.accent} compact />
+        <StatBar label="FOCUS" value={agent.metrics.focus} accent={agent.accent} compact />
+      </div>
 
       <div className="flex items-center justify-between gap-2 font-mono text-[10px] text-void-500">
         <span className="min-w-0 truncate">{agent.activity}</span>
