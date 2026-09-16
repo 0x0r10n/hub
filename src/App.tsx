@@ -4,6 +4,7 @@ import { useLiveWorld } from "@/hooks/useLiveWorld";
 import { useWorldStore } from "@/store/worldStore";
 import { AppShell } from "@/components/layout/AppShell";
 import { GlobalInspectorDrawer } from "@/components/layout/GlobalInspectorDrawer";
+import { ConnectAgentModal } from "@/components/layout/ConnectAgentModal";
 import { BootLoader } from "@/components/ui/Loader";
 import { MapPage } from "@/pages/MapPage";
 import { AgentsPage } from "@/pages/AgentsPage";
@@ -34,6 +35,7 @@ function App() {
         <GlobalInspectorDrawer />
       </AppShell>
       <Analytics />
+      <ConnectAgentModal />
     </>
   );
 }
