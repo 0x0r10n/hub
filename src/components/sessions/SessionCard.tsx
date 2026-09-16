@@ -63,10 +63,12 @@ export function SessionCard({
       </div>
 
       <div className="min-w-0 border-t border-void-800 px-2.5 py-2">
-        <div className="truncate font-mono text-xs text-void-100">{session.title}</div>
-        <div className="mt-0.5 flex items-center justify-between font-mono text-[10px] text-void-400">
-          <span className="truncate">{room?.name ?? "Unknown room"}</span>
-          <span className="shrink-0" style={{ color: `var(--color-${accent})` }}>{zone?.shortLabel}</span>
+        <div className="truncate font-mono text-[10px] uppercase tracking-wide" style={{ color: `var(--color-${accent})` }}>
+          {zone?.name}
+        </div>
+        <div className="truncate font-mono text-xs text-void-100">{room?.name ?? session.title}</div>
+        <div className="mt-0.5 truncate font-mono text-[10px] text-void-400">
+          {participants.length} {participants.length === 1 ? "agent" : "agents"} · {session.title}
         </div>
       </div>
     </button>

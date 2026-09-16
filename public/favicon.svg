@@ -1,7 +1,34 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" shape-rendering="crispEdges">
-  <rect width="16" height="16" fill="#050609"/>
-  <rect x="3" y="3" width="10" height="10" fill="#0d1019" stroke="#34eaf2" stroke-width="0.5"/>
-  <rect x="5" y="5" width="2" height="2" fill="#34eaf2"/>
-  <rect x="9" y="5" width="2" height="2" fill="#ff5fd1"/>
-  <rect x="5" y="9" width="6" height="2" fill="#b083ff"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" shape-rendering="crispEdges">
+  <!-- GOON HUB mascot mark: a pixel-art heart-eyed robot on a dark badge -->
+  <rect width="24" height="24" fill="#0a0612"/>
+  <rect x="0.5" y="0.5" width="23" height="23" fill="none" stroke="#ff2da6" stroke-width="1" opacity="0.85"/>
+
+  <!-- antenna -->
+  <rect x="11" y="0" width="1" height="1" fill="#ff2da6"/>
+  <rect x="11" y="1" width="1" height="2" fill="#b84cff"/>
+
+  <!-- helmet silhouette -->
+  <rect x="8" y="3" width="8" height="1" fill="#ede3f7"/>
+  <rect x="6" y="4" width="12" height="1" fill="#ede3f7"/>
+  <rect x="5" y="5" width="14" height="1" fill="#ede3f7"/>
+  <rect x="4" y="6" width="16" height="7" fill="#ede3f7"/>
+  <rect x="5" y="14" width="14" height="1" fill="#ede3f7"/>
+  <rect x="6" y="15" width="12" height="1" fill="#ede3f7"/>
+  <rect x="8" y="16" width="8" height="1" fill="#ede3f7"/>
+
+  <!-- visor -->
+  <rect x="6" y="7" width="12" height="7" fill="#150a1f"/>
+
+  <!-- heart eyes -->
+  <rect x="8" y="8" width="1" height="1" fill="#ff2da6"/>
+  <rect x="10" y="8" width="1" height="1" fill="#ff2da6"/>
+  <rect x="7" y="9" width="5" height="2" fill="#ff2da6"/>
+  <rect x="8" y="11" width="3" height="1" fill="#ff2da6"/>
+  <rect x="9" y="12" width="1" height="1" fill="#ff2da6"/>
+
+  <rect x="14" y="8" width="1" height="1" fill="#ff2da6"/>
+  <rect x="16" y="8" width="1" height="1" fill="#ff2da6"/>
+  <rect x="13" y="9" width="5" height="2" fill="#ff2da6"/>
+  <rect x="14" y="11" width="3" height="1" fill="#ff2da6"/>
+  <rect x="15" y="12" width="1" height="1" fill="#ff2da6"/>
 </svg>
